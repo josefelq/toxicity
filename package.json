@@ -1,0 +1,28 @@
+{
+  "name": "toxicity",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/josefelq/toxicity.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/josefelq/toxicity/issues"
+  },
+  "homepage": "https://github.com/josefelq/toxicity#readme",
+  "dependencies": {
+    "cookie-session": "^2.0.0-beta.3",
+    "express": "^4.16.3",
+    "mongoose": "^5.1.3",
+    "nodemon": "^1.17.5",
+    "passport": "^0.4.0",
+    "passport-steam": "^1.0.10"
+  }
+}
