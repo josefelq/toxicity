@@ -4,7 +4,7 @@ module.exports = app => {
   app.get(
     '/auth/steam',
     passport.authenticate('steam', { failureRedirect: '/' }),
-    function(req, res) {
+    (req, res) => {
       res.redirect('/');
     }
   );
@@ -12,12 +12,12 @@ module.exports = app => {
   app.get(
     '/auth/steam/return',
     // Issue #37 - Workaround for Express router module stripping the full url, causing assertion to fail
-    function(req, res, next) {
+    (req, res, next) => {
       req.url = req.originalUrl;
       next();
     },
     passport.authenticate('steam', { failureRedirect: '/error' }),
-    function(req, res) {
+    (req, res) => {
       res.redirect('/');
     }
   );
