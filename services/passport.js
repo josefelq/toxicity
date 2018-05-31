@@ -18,9 +18,10 @@ passport.deserializeUser((id, done) => {
 passport.use(
   new SteamStrategy(
     {
-      returnURL: 'http://localhost:3000/auth/steam/return',
-      realm: 'http://localhost:3000/',
+      returnURL: keys.returnURL,
+      realm: keys.realm,
       apiKey: keys.steamWebAPIKey
+      //proxy: true
     },
     async (identifier, profile, done) => {
       const existingUser = await User.findOne({ steamId: profile.id });
