@@ -2,3 +2,33 @@
   display: block;
   margin: 0;
 }
+html,
+body,
+#root,
+.wrapper {
+  height: 100%;
+}
+
+body {
+  background-color: #607d8b;
+}
+
+header {
+  height: 7%;
+}
+
+main {
+  height: 80%;
+}
+
+.no-profile-found {
+}
+
+#go-back-home {
+  color: white;
+}
+
+.content {
+  background-color: #eceff1;
+  height: 100%;
+}

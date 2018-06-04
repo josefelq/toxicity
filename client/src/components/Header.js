@@ -28,20 +28,22 @@ class Header extends Component {
   }
   render() {
     return (
-      <nav>
-        <div className="nav-wrapper z-depth-1">
-          <div className="container">
-            <div className="col s12 m12 l12">
-              <Link to="/" className="brand-logo">
-                !Tilt
-              </Link>
-              <ul id="nav-mobile" className="right hide-on-med-and-down">
-                {this.renderContent()}
-              </ul>
+      <header>
+        <nav className="blue-grey darken-4 header">
+          <div className="nav-wrapper z-depth-1">
+            <div className="container">
+              <div className="col s12 m12 l12">
+                <Link to="/" className="brand-logo center">
+                  !Tilt
+                </Link>
+                <ul id="nav-mobile" className="right hide-on-med-and-down">
+                  {this.renderContent()}
+                </ul>
+              </div>
             </div>
           </div>
-        </div>
-      </nav>
+        </nav>
+      </header>
     );
   }
 }

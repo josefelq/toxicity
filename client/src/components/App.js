@@ -3,8 +3,9 @@ import { BrowserRouter, Switch, Route } from 'react-router-dom';
 import { connect } from 'react-redux';
 import * as actions from '../actions';
 
-import Header from './Header';
 import Home from './Home';
+import NoMatch from './NoMatch';
+import Profile from './profile/Profile';
 
 class App extends Component {
   componentDidMount() {
@@ -13,16 +14,13 @@ class App extends Component {
 
   render() {
     return (
-      <div>
+      <div className="wrapper">
         <BrowserRouter>
-          <div>
-            <Header />
-            <div className="container">
-              <Switch>
-                <Route component={Home} path="/" />
-              </Switch>
-            </div>
-          </div>
+          <Switch>
+            <Route component={Profile} path="/suspects/:id" />
+            <Route component={Home} path="/" exact />
+            <Route component={NoMatch} />
+          </Switch>
         </BrowserRouter>
       </div>
     );
