@@ -34,7 +34,7 @@ class Header extends Component {
             <div className="container">
               <div className="col s12 m12 l12">
                 <Link to="/" className="brand-logo center">
-                  !Tilt
+                  No Tilt Zone
                 </Link>
                 <ul id="nav-mobile" className="right hide-on-med-and-down">
                   {this.renderContent()}

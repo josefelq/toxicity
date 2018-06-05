@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const steam = require('steam-web');
 const keys = require('../config/keys');
 
+const steamid = require('steamidconvert')(keys.steamWebAPIKey);
 const steamAPI = new steam({
   apiKey: keys.steamWebAPIKey,
   format: 'json' //optional ['json', 'xml', 'vdf']

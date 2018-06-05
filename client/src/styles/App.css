@@ -10,11 +10,15 @@ body,
 }
 
 body {
-  background-color: #607d8b;
+  background-color: #90a4ae;
 }
 
 header {
   height: 7%;
+}
+
+header. * {
+  height: 100%;
 }
 
 main {
@@ -22,6 +26,7 @@ main {
 }
 
 .no-profile-found {
+  margin-top: 10%;
 }
 
 #go-back-home {
@@ -31,4 +36,22 @@ main {
 .content {
   background-color: #eceff1;
   height: 100%;
+  margin-top: 1%;
+}
+
+.profile-info {
+  height: 50%;
+}
+
+.some-info {
+  margin-top: -7.5px;
+  height: 100%;
+}
+
+.steam-info {
+  height: 100%;
+}
+
+.vertical-align {
+  padding-top: 15%;
 }

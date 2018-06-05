@@ -31,12 +31,33 @@ class Profile extends Component {
   renderProfile() {
     if (this.state.steamInfo && this.state.suspectInfo) {
       return (
-        <div className="container content">
-          <h5>{this.state.steamInfo.personaname}</h5>
-          <img src={this.state.steamInfo.avatarfull} alt="Player avatar" />
-          <h6>SteamID: {this.state.suspectInfo.steamId}</h6>
-          <h6>Toxic reports: {this.state.suspectInfo.toxicReports}</h6>
-          <h6>Griefing reports: {this.state.suspectInfo.griefReports}</h6>
+        <div className="container content z-depth-4">
+          <div className="row profile-info">
+            <div className="col l3 some-info">
+              <div className="card steam-info">
+                <div className="card-image waves-effect waves-block waves-light">
+                  <img
+                    className="activator"
+                    src={this.state.steamInfo.avatarfull}
+                    alt="avatar of user"
+                  />
+                </div>
+                <div className="card-content">
+                  <span className="card-title activator grey-text text-darken-4">
+                    {this.state.steamInfo.personaname}
+                    <i className="material-icons right">more_vert</i>
+                  </span>
+                  <p>Link para reportar aqui</p>
+                </div>
+                <div className="card-reveal">
+                  <span className="card-title grey-text text-darken-4">
+                    Stats<i className="material-icons right">close</i>
+                  </span>
+                  <p>Cule mocho</p>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       );
     }
@@ -73,7 +94,7 @@ class Profile extends Component {
 
   renderLoading() {
     return (
-      <div className="row">
+      <div className="row vertical-align center-align">
         <div className="preloader-wrapper big active">
           <div className="spinner-layer spinner-blue-only">
             <div className="circle-clipper left">
@@ -93,9 +114,7 @@ class Profile extends Component {
   renderContent() {
     switch (this.state.suspectInfo) {
       case null:
-        return (
-          <div className="wrapper valign-wrapper">{this.renderLoading()}</div>
-        );
+        return <div className="wrapper">{this.renderLoading()}</div>;
       case false:
         return <div className="wrapper">{this.renderNoProfileFound()}</div>;
       default:
