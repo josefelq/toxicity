@@ -3,8 +3,7 @@ const { Schema } = mongoose;
 
 const suspectSchema = new Schema({
   steamId: String,
-  toxicReports: Number,
-  griefReports: Number,
+  votes: Number,
   comments: [{ type: Schema.Types.ObjectId, ref: 'Comment' }]
 });
 

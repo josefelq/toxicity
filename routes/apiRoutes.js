@@ -41,8 +41,7 @@ module.exports = app => {
           if (!checkSuspect) {
             const newSuspect = await new Suspect({
               steamId: req.body.steamId,
-              toxicReports: 0,
-              griefReports: 0
+              votes: 0
             }).save();
             const updateUser = await User.findOneAndUpdate(
               { steamId: req.body.steamId },
@@ -57,9 +56,9 @@ module.exports = app => {
     });
   });
 
-  //Report a suspect
+  //Comment on a suspect's profile
   app.post('/api/suspects/:steamId/comments', async (req, res) => {
-    let data = null;
+    let data = false;
     const existingUser = await User.findOne({
       steamId: req.body.owner
     });
@@ -67,31 +66,22 @@ module.exports = app => {
       steamId: req.params.steamId
     });
 
-    if (existingUser && theSuspect) {
+    if (existingUser && theSuspect && checkData(req.body)) {
       //TODO: user cannot comment on his own profile (yet)
-      if (checkData(req.body)) {
-        const newComment = await new Comment({
-          owner: existingUser._id,
-          text: req.body.text,
-          evidence: req.body.evidence,
-          votes: 0,
-          type: req.body.type,
-          date: Date.now()
-        }).save();
-        data = newComment;
-        theSuspect.comments.push(newComment._id);
-        if (req.body.type === true) {
-          theSuspect.griefReports += 1;
-        } else {
-          theSuspect.toxicReports += 1;
-        }
-
-        await theSuspect.save();
-      }
+      const newComment = await new Comment({
+        owner: existingUser._id,
+        text: req.body.text,
+        votes: 0,
+        date: Date.now()
+      }).save();
+      data = newComment;
+      theSuspect.comments.push(newComment._id);
+      await theSuspect.save();
     }
     res.send(data);
   });
 
+  //Get Steam info
   app.get('/api/suspects/:steamId/steam', (req, res) => {
     let someData = false;
     steamAPI.getPlayerSummaries({
@@ -106,7 +96,7 @@ module.exports = app => {
   });
 
   function checkData(bodyData) {
-    if (bodyData.text && bodyData.evidence && bodyData.type) {
+    if (bodyData.text) {
       return true;
     }
     return false;

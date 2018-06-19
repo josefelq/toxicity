@@ -5,9 +5,7 @@ const { Schema } = mongoose;
 const commentSchema = new Schema({
   owner: { type: Schema.Types.ObjectId, ref: 'Suspect' },
   text: String,
-  evidence: String,
   votes: Number,
-  type: Boolean,
   date: Date
 });
 
