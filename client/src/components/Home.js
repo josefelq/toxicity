@@ -40,8 +40,8 @@ class Home extends Component {
 
   renderContent() {
     const styles = {
-      backgroundColor: '#607d8b',
-      color: 'white'
+      backgroundColor: 'white',
+      color: 'black'
     };
     switch (this.props.auth) {
       case null:

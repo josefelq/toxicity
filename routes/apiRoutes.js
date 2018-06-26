@@ -40,8 +40,7 @@ module.exports = app => {
           });
           if (!checkSuspect) {
             const newSuspect = await new Suspect({
-              steamId: req.body.steamId,
-              votes: 0
+              steamId: req.body.steamId
             }).save();
             const updateUser = await User.findOneAndUpdate(
               { steamId: req.body.steamId },
@@ -93,6 +92,56 @@ module.exports = app => {
         res.send(someData);
       }
     });
+  });
+
+  //Report a suspect
+  app.post('/api/suspects/:steamId/follow', async (req, res) => {
+    let response = false;
+    const theSuspect = await Suspect.findOne({
+      steamId: req.params.steamId
+    });
+    const existingUser = await User.findOne({
+      steamId: req.body.owner
+    });
+
+    if (theSuspect && existingUser) {
+      const suspectReports = theSuspect.votes;
+      if (!(suspectReports.indexOf(existingUser.steamId) > -1)) {
+        theSuspect.votes.push(existingUser.steamId);
+        existingUser.following.push(theSuspect._id);
+        response = true;
+        await theSuspect.save();
+        await existingUser.save();
+      }
+    }
+    res.send(response);
+  });
+
+  //Unfollow a suspect
+  app.post('/api/suspects/:steamId/unfollow', async (req, res) => {
+    let response = false;
+    const theSuspect = await Suspect.findOne({
+      steamId: req.params.steamId
+    });
+    const existingUser = await User.findOne({
+      steamId: req.body.owner
+    });
+
+    if (theSuspect && existingUser) {
+      const suspectReports = theSuspect.votes;
+      const index = suspectReports.indexOf(existingUser.steamId);
+      if (index > -1) {
+        theSuspect.votes.splice(index, 1);
+        const index2 = existingUser.following.indexOf(theSuspect._id);
+        if (index2 > -1) {
+          existingUser.following.splice(index2, 1);
+          response = true;
+          await theSuspect.save();
+          await existingUser.save();
+        }
+      }
+    }
+    res.send(response);
   });
 
   function checkData(bodyData) {

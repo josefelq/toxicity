@@ -1,14 +1,49 @@
 import React, { Component } from 'react';
 import Header from '../Header';
 import { connect } from 'react-redux';
-import * as actions from '../../actions';
 import axios from 'axios';
+
+import Loading from '../Loading';
 
 class Profile extends Component {
   constructor(props) {
     super(props);
     this.state = { suspectInfo: null, steamInfo: null };
     this.addUser = this.addUser.bind(this);
+    this.followSuspect = this.followSuspect.bind(this);
+    this.unfollowSuspect = this.unfollowSuspect.bind(this);
+  }
+
+  followSuspect() {
+    const { id } = this.props.match.params;
+    axios
+      .post(`/api/suspects/${id}/follow`, {
+        owner: this.props.auth.steamId
+      })
+      .then(response => {
+        if (response.data === true) {
+          this.setState({ suspectInfo: null });
+          axios.get(`/api/suspects/${id}`).then(response2 => {
+            this.setState({ suspectInfo: response2.data });
+          });
+        }
+      });
+  }
+
+  unfollowSuspect() {
+    const { id } = this.props.match.params;
+    axios
+      .post(`/api/suspects/${id}/unfollow`, {
+        owner: this.props.auth.steamId
+      })
+      .then(response => {
+        if (response.data === true) {
+          this.setState({ suspectInfo: null });
+          axios.get(`/api/suspects/${id}`).then(response2 => {
+            this.setState({ suspectInfo: response2.data });
+          });
+        }
+      });
   }
 
   addUser() {
@@ -31,37 +66,64 @@ class Profile extends Component {
   renderProfile() {
     if (this.state.steamInfo && this.state.suspectInfo) {
       return (
-        <div className="container content z-depth-4">
-          <div className="row profile-info">
-            <div className="col l3 some-info">
-              <div className="card steam-info">
-                <div className="card-image waves-effect waves-block waves-light">
-                  <img
-                    className="activator"
-                    src={this.state.steamInfo.avatarfull}
-                    alt="avatar of user"
-                  />
+        <div className="container content">
+          <div className="row suspect-info z-depth-4">
+            <div className="col s3">
+              <img
+                className="responsive-img circle"
+                src={this.state.steamInfo.avatarfull}
+                alt="avatar of user"
+              />
+            </div>
+            <div className="col s4">
+              <div className="row">
+                <div className="col">
+                  <h3>{this.state.steamInfo.personaname}</h3>
                 </div>
-                <div className="card-content">
-                  <span className="card-title activator grey-text text-darken-4">
-                    {this.state.steamInfo.personaname}
-                    <i className="material-icons right">more_vert</i>
-                  </span>
-                  <p>Link para reportar aqui</p>
-                </div>
-                <div className="card-reveal">
-                  <span className="card-title grey-text text-darken-4">
-                    Stats<i className="material-icons right">close</i>
-                  </span>
-                  <p>Cule mocho</p>
+              </div>
+              <div className="row">
+                <div className="col">
+                  <p>
+                    <b>SteamID:</b> {this.state.steamInfo.steamid}
+                  </p>
                 </div>
               </div>
             </div>
+            <div className="col s4">{this.renderFollowButton()}</div>
           </div>
         </div>
       );
     }
   }
+
+  renderFollowButton() {
+    if (!this.props.auth) {
+      return (
+        <a className="waves-effect waves-light btn-large disabled follow">
+          Log in to start following!
+        </a>
+      );
+    } else if (
+      this.state.suspectInfo.votes.indexOf(this.props.auth.steamId) > -1
+    ) {
+      return (
+        <a
+          className="waves-effect waves-light btn-large red follow"
+          onClick={this.unfollowSuspect}>
+          Unfollow
+        </a>
+      );
+    } else {
+      return (
+        <a
+          className="waves-effect waves-light btn-large green follow"
+          onClick={this.followSuspect}>
+          Follow
+        </a>
+      );
+    }
+  }
+
   renderNoProfileFound() {
     return (
       <div className="row">
@@ -80,8 +142,7 @@ class Profile extends Component {
                 className="btn waves-effect waves-light"
                 type="submit"
                 name="action"
-                onClick={this.addUser}
-              >
+                onClick={this.addUser}>
                 Add user
                 <i className="material-icons right">send</i>
               </button>
@@ -93,23 +154,7 @@ class Profile extends Component {
   }
 
   renderLoading() {
-    return (
-      <div className="row vertical-align center-align">
-        <div className="preloader-wrapper big active">
-          <div className="spinner-layer spinner-blue-only">
-            <div className="circle-clipper left">
-              <div className="circle" />
-            </div>
-            <div className="gap-patch">
-              <div className="circle" />
-            </div>
-            <div className="circle-clipper right">
-              <div className="circle" />
-            </div>
-          </div>
-        </div>
-      </div>
-    );
+    return <Loading />;
   }
   renderContent() {
     switch (this.state.suspectInfo) {
@@ -135,4 +180,7 @@ class Profile extends Component {
 function mapStateToProps({ auth }) {
   return { auth };
 }
-export default connect(mapStateToProps, actions)(Profile);
+export default connect(
+  mapStateToProps,
+  null
+)(Profile);
