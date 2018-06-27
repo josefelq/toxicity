@@ -36,7 +36,13 @@ main {
 
 .suspect-info {
   background-color: white;
-  border-radius: 25px;
+  border-radius: 10px;
+}
+
+.comment-section {
+  background-color: white;
+  border-radius: 10px;
+  min-height: 60%;
 }
 
 .vertical-align {
@@ -45,5 +51,16 @@ main {
 
 .follow {
   margin-top: 21%;
+  width: 100%;
+}
+#textarea2 {
+  padding-bottom: 0;
+}
+
+.comment-input {
+  margin-bottom: 0;
+}
+
+.comment-button {
   width: 100%;
 }

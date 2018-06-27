@@ -64,20 +64,56 @@ module.exports = app => {
     const theSuspect = await Suspect.findOne({
       steamId: req.params.steamId
     });
-
-    if (existingUser && theSuspect && checkData(req.body)) {
-      //TODO: user cannot comment on his own profile (yet)
-      const newComment = await new Comment({
-        owner: existingUser._id,
-        text: req.body.text,
-        votes: 0,
-        date: Date.now()
-      }).save();
-      data = newComment;
-      theSuspect.comments.push(newComment._id);
-      await theSuspect.save();
+    //TODO: user cannot comment on his own profile (yet)
+    if (existingUser && theSuspect && checkData(req.body.text)) {
+      const existingComment = await Comment.findOne({
+        owner: existingUser._id
+      });
+      let index = -1;
+      if (existingComment) {
+        index = theSuspect.comments.indexOf(existingComment._id);
+      }
+      if (!(index > -1)) {
+        const newComment = await new Comment({
+          owner: existingUser._id,
+          ownerSteam: existingUser.steamId,
+          text: req.body.text,
+          votes: 0,
+          date: Date.now()
+        }).save();
+        data = newComment;
+        theSuspect.comments.push(newComment._id);
+        await theSuspect.save();
+      }
     }
     res.send(data);
+  });
+
+  //Delete a comment from suspect profile
+  app.delete('/api/suspects/:steamId/comments', async (req, res) => {
+    let response = false;
+    const theSuspect = await Suspect.findOne({
+      steamId: req.params.steamId
+    });
+    const existingUser = await User.findOne({
+      steamId: req.body.owner
+    });
+
+    if (existingUser && theSuspect) {
+      const deletedComment = await Comment.findOne({
+        owner: existingUser._id
+      });
+      if (deletedComment) {
+        const index = theSuspect.comments.indexOf(deletedComment._id);
+        if (index > -1) {
+          theSuspect.comments.splice(index, 1);
+          await theSuspect.save();
+        }
+        await deletedComment.remove();
+        response = deletedComment;
+      }
+    }
+    res.send(response);
   });
 
   //Get Steam info
@@ -92,6 +128,17 @@ module.exports = app => {
         res.send(someData);
       }
     });
+  });
+
+  //get User data
+  app.get('/api/users/:userId', async (req, res) => {
+    let response = false;
+    const existingUser = await User.findById(req.params.userId);
+
+    if (existingUser) {
+      response = existingUser;
+    }
+    res.send(response);
   });
 
   //Report a suspect
@@ -145,7 +192,7 @@ module.exports = app => {
   });
 
   function checkData(bodyData) {
-    if (bodyData.text) {
+    if (bodyData) {
       return true;
     }
     return false;

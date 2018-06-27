@@ -28,7 +28,11 @@ passport.use(
       if (existingUser) {
         return done(null, existingUser);
       }
-      const user = await new User({ steamId: profile.id }).save();
+      const user = await new User({
+        steamId: profile.id,
+        steamAvatar: 'https://image.flaticon.com/icons/svg/747/747376.svg',
+        steamName: profile.id
+      }).save();
       done(null, user);
     }
   )

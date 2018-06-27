@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import axios from 'axios';
 
 import Loading from '../Loading';
+import CommentSection from './CommentSection';
 
 class Profile extends Component {
   constructor(props) {
@@ -91,6 +92,7 @@ class Profile extends Component {
             </div>
             <div className="col s4">{this.renderFollowButton()}</div>
           </div>
+          <CommentSection comments={this.state.suspectInfo.comments} />
         </div>
       );
     }

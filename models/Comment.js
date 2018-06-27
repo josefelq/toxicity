@@ -1,11 +1,12 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
-//type: false if its toxicity, true if griefing
 const commentSchema = new Schema({
-  owner: { type: Schema.Types.ObjectId, ref: 'Suspect' },
+  owner: { type: Schema.Types.ObjectId, ref: 'users' },
+  ownerSteam: String,
   text: String,
   votes: Number,
+  participants: [{ type: String }],
   date: Date
 });
 
