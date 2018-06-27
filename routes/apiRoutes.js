@@ -18,12 +18,28 @@ module.exports = app => {
     let data = false;
     const theSuspect = await Suspect.findOne({
       steamId: req.params.steamId
-    }).populate('comments');
+    })
+      .populate('comments')
+      .lean();
     if (theSuspect) {
+      if (theSuspect.comments.length > 0) {
+        const theArray = theSuspect.comments;
+        for (let i = 0; i < theArray.length; i++) {
+          let element = theArray[i];
+          const userInfo = await User.findById(element.owner);
+          element.steamName = userInfo.steamName;
+          element.steamAvatar = userInfo.steamAvatar;
+          element.steamId = userInfo.steamId;
+        }
+      }
       data = theSuspect;
+      res.send(data);
     }
-    res.send(data);
   });
+
+  function runPlease() {
+    console.log('llegamos aqui');
+  }
 
   //Create a suspect
   app.post('/api/suspects', async (req, res) => {
@@ -76,7 +92,6 @@ module.exports = app => {
       if (!(index > -1)) {
         const newComment = await new Comment({
           owner: existingUser._id,
-          ownerSteam: existingUser.steamId,
           text: req.body.text,
           votes: 0,
           date: Date.now()

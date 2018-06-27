@@ -13,6 +13,7 @@ class Profile extends Component {
     this.addUser = this.addUser.bind(this);
     this.followSuspect = this.followSuspect.bind(this);
     this.unfollowSuspect = this.unfollowSuspect.bind(this);
+    this.addComment = this.addComment.bind(this);
   }
 
   followSuspect() {
@@ -64,6 +65,19 @@ class Profile extends Component {
       });
     });
   }
+
+  addComment(response) {
+    if (response) {
+      this.setState({ suspectInfo: null });
+      const { id } = this.props.match.params;
+      axios.get(`/api/suspects/${id}`).then(response => {
+        this.setState({ suspectInfo: response.data });
+      });
+    } else {
+      //Comment couldn't be published
+    }
+  }
+
   renderProfile() {
     if (this.state.steamInfo && this.state.suspectInfo) {
       return (
@@ -92,7 +106,11 @@ class Profile extends Component {
             </div>
             <div className="col s4">{this.renderFollowButton()}</div>
           </div>
-          <CommentSection comments={this.state.suspectInfo.comments} />
+          <CommentSection
+            comments={this.state.suspectInfo.comments}
+            uri={this.props.match.params.id}
+            addComment={this.addComment}
+          />
         </div>
       );
     }
