@@ -24,7 +24,7 @@ class CommentSection extends Component {
 
   render() {
     return (
-      <div className="row comment-section z-depth-4">
+      <div className="row">
         <div className="col s12">
           <div className="row">
             <div className="col s2 ">
@@ -67,17 +67,23 @@ class CommentSection extends Component {
       if (!this.props.auth) {
         return <div />;
       } else if (this.userHasComment()) {
-        return <div>Ya tiene un comment</div>;
-      } else {
         return (
           <div className="row">
+            <div className="col s12">
+              You already posted a comment on this user.
+            </div>
+          </div>
+        );
+      } else {
+        return (
+          <div className="row comment-section">
             <form className="col s12" onSubmit={this.handleSubmit}>
               <div className="row comment-input">
                 <div className="input-field col s12">
                   <textarea
                     id="textarea2"
                     className="materialize-textarea"
-                    maxLength="120"
+                    maxLength="300"
                     value={this.state.input}
                     onChange={this.handleChange}
                   />
@@ -104,7 +110,11 @@ class CommentSection extends Component {
 
   renderComments() {
     if (this.state.comments.length > 0) {
-      return <ul className="collection">{this.renderIndividualComments()}</ul>;
+      return (
+        <div className="row">
+          <ul className="collection">{this.renderIndividualComments()}</ul>
+        </div>
+      );
     } else {
       return <div>No comments at the moment.</div>;
     }

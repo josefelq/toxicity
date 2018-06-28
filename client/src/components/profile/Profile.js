@@ -82,7 +82,7 @@ class Profile extends Component {
     if (this.state.steamInfo && this.state.suspectInfo) {
       return (
         <div className="container content">
-          <div className="row suspect-info z-depth-4">
+          <div className="row suspect-info">
             <div className="col s3">
               <img
                 className="responsive-img circle"
@@ -120,7 +120,7 @@ class Profile extends Component {
     if (!this.props.auth) {
       return (
         <a className="waves-effect waves-light btn-large disabled follow">
-          Log in to start following!
+          Log in to report this player!
         </a>
       );
     } else if (
@@ -128,17 +128,21 @@ class Profile extends Component {
     ) {
       return (
         <a
-          className="waves-effect waves-light btn-large red follow"
+          className="waves-effect waves-light btn-large grey lighten-2 follow"
           onClick={this.unfollowSuspect}>
-          Unfollow
+          Unreport (
+          {this.state.suspectInfo.votes.length}
+          )
         </a>
       );
     } else {
       return (
         <a
-          className="waves-effect waves-light btn-large green follow"
+          className="waves-effect waves-light btn-large red follow"
           onClick={this.followSuspect}>
-          Follow
+          Report (
+          {this.state.suspectInfo.votes.length}
+          )
         </a>
       );
     }

@@ -62,7 +62,6 @@ class Home extends Component {
                         style={styles}
                         value={this.state.steamID}
                         onChange={this.handleChange}
-                        autoComplete="off"
                       />
                       <div className="center-align">
                         <button className="waves-effect waves-light btn-large search-button">
