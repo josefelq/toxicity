@@ -15,7 +15,6 @@ const Comment = mongoose.model('Comment');
 module.exports = app => {
   //Get Suspect info
   app.get('/api/suspects/:steamId', async (req, res) => {
-    console.log('llegamos aqui');
     let data = false;
     const theSuspect = await Suspect.findOne({
       steamId: req.params.steamId
@@ -34,8 +33,8 @@ module.exports = app => {
         }
       }
       data = theSuspect;
-      res.send(data);
     }
+    res.send(data);
   });
 
   function runPlease() {
