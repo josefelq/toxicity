@@ -13,7 +13,7 @@ class Profile extends Component {
     this.addUser = this.addUser.bind(this);
     this.followSuspect = this.followSuspect.bind(this);
     this.unfollowSuspect = this.unfollowSuspect.bind(this);
-    this.addComment = this.addComment.bind(this);
+    this.changeProfile = this.changeProfile.bind(this);
   }
 
   followSuspect() {
@@ -24,7 +24,7 @@ class Profile extends Component {
       })
       .then(response => {
         if (response.data === true) {
-          this.setState({ suspectInfo: null });
+          //this.setState({ suspectInfo: null });
           axios.get(`/api/suspects/${id}`).then(response2 => {
             this.setState({ suspectInfo: response2.data });
           });
@@ -40,7 +40,7 @@ class Profile extends Component {
       })
       .then(response => {
         if (response.data === true) {
-          this.setState({ suspectInfo: null });
+          //this.setState({ suspectInfo: null });
           axios.get(`/api/suspects/${id}`).then(response2 => {
             this.setState({ suspectInfo: response2.data });
           });
@@ -66,9 +66,9 @@ class Profile extends Component {
     });
   }
 
-  addComment(response) {
+  changeProfile(response) {
     if (response) {
-      this.setState({ suspectInfo: null });
+      //this.setState({ suspectInfo: null });
       const { id } = this.props.match.params;
       axios.get(`/api/suspects/${id}`).then(response => {
         this.setState({ suspectInfo: response.data });
@@ -109,7 +109,7 @@ class Profile extends Component {
           <CommentSection
             comments={this.state.suspectInfo.comments}
             uri={this.props.match.params.id}
-            addComment={this.addComment}
+            changeProfile={this.changeProfile}
           />
         </div>
       );

@@ -13,6 +13,13 @@ class CommentSection extends Component {
     this.renderCommentInput = this.renderCommentInput.bind(this);
     this.renderComments = this.renderComments.bind(this);
     this.renderIndividualComments = this.renderIndividualComments.bind(this);
+    this.handleCommentAction = this.handleCommentAction.bind(this);
+  }
+
+  componentDidUpdate(prevProps) {
+    if (this.props.comments.length !== prevProps.comments.length) {
+      this.setState({ input: '', comments: this.props.comments });
+    }
   }
 
   render() {
@@ -47,7 +54,7 @@ class CommentSection extends Component {
     });
 
     if (sent) {
-      this.props.addComment(sent.data);
+      this.props.changeProfile(sent.data);
     }
   }
 
@@ -96,10 +103,30 @@ class CommentSection extends Component {
   }
 
   renderComments() {
-    if (this.state.comments.length) {
+    if (this.state.comments.length > 0) {
       return <ul className="collection">{this.renderIndividualComments()}</ul>;
     } else {
-      return;
+      return <div>No comments at the moment.</div>;
+    }
+  }
+
+  async handleCommentAction() {
+    if (this.userHasComment()) {
+      //Delete
+
+      let request = await axios.delete(
+        `/api/suspects/${this.props.uri}/comments`,
+        {
+          data: {
+            owner: this.props.auth.steamId
+          }
+        }
+      );
+      if (request) {
+        this.props.changeProfile(request.data);
+      }
+    } else {
+      //Upvote
     }
   }
 
@@ -114,8 +141,11 @@ class CommentSection extends Component {
           />
           <span className="title">{element.steamName}</span>
           <p>{element.text}</p>
-          <a href="#!" className="secondary-content">
-            <i className="material-icons">grade</i>
+
+          <a onClick={this.handleCommentAction} className="secondary-content">
+            <i className="material-icons clicky-trash waves-effect">
+              {this.userHasComment ? 'delete' : 'grade'}
+            </i>
           </a>
         </li>
       );

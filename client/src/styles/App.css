@@ -64,3 +64,11 @@ main {
 .comment-button {
   width: 100%;
 }
+
+.clicky-trash {
+  cursor: pointer;
+}
+
+i.clicky-trash {
+  color: red;
+}
