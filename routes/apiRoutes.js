@@ -15,6 +15,7 @@ const Comment = mongoose.model('Comment');
 module.exports = app => {
   //Get Suspect info
   app.get('/api/suspects/:steamId', async (req, res) => {
+    console.log('llegamos aqui');
     let data = false;
     const theSuspect = await Suspect.findOne({
       steamId: req.params.steamId
@@ -86,11 +87,11 @@ module.exports = app => {
         owner: existingUser._id
       });
       let index = -1;
-      /*
+
       if (existingComment) {
         index = theSuspect.comments.indexOf(existingComment._id);
       }
-      */
+
       if (!(index > -1)) {
         const newComment = await new Comment({
           owner: existingUser._id,
