@@ -64,7 +64,7 @@ class Home extends Component {
                         onChange={this.handleChange}
                       />
                       <div className="center-align">
-                        <button className="waves-effect waves-light btn-large search-button">
+                        <button className="waves-effect waves-light btn-large search-button blue-grey darken-3">
                           Search
                         </button>
                       </div>
@@ -81,7 +81,7 @@ class Home extends Component {
   render() {
     return (
       <div className="wrapper">
-        <Header />
+        <Header needsHeader={false} />
         <main>{this.renderContent()}</main>
       </div>
     );

@@ -14,6 +14,7 @@ class Profile extends Component {
     this.followSuspect = this.followSuspect.bind(this);
     this.unfollowSuspect = this.unfollowSuspect.bind(this);
     this.changeProfile = this.changeProfile.bind(this);
+    this.useSearchBar = this.useSearchBar.bind(this);
   }
 
   followSuspect() {
@@ -60,9 +61,11 @@ class Profile extends Component {
     const { id } = this.props.match.params;
     axios.get(`/api/suspects/${id}`).then(response => {
       this.setState({ suspectInfo: response.data });
-      axios.get(`/api/suspects/${id}/steam`).then(response => {
-        this.setState({ steamInfo: response.data });
-      });
+      if (this.state.suspectInfo !== null) {
+        axios.get(`/api/suspects/${id}/steam`).then(response => {
+          this.setState({ steamInfo: response.data });
+        });
+      }
     });
   }
 
@@ -120,7 +123,7 @@ class Profile extends Component {
     if (!this.props.auth) {
       return (
         <a className="waves-effect waves-light btn-large disabled follow">
-          Log in to report this player!
+          Log in to report.
         </a>
       );
     } else if (
@@ -128,9 +131,9 @@ class Profile extends Component {
     ) {
       return (
         <a
-          className="waves-effect waves-light btn-large grey lighten-2 follow"
+          className="waves-effect waves-light btn-large grey lighten-2 follow black-text"
           onClick={this.unfollowSuspect}>
-          Unreport (
+          Remove Report (
           {this.state.suspectInfo.votes.length}
           )
         </a>
@@ -138,7 +141,7 @@ class Profile extends Component {
     } else {
       return (
         <a
-          className="waves-effect waves-light btn-large red follow"
+          className="waves-effect waves-light btn-large red follow black-text"
           onClick={this.followSuspect}>
           Report (
           {this.state.suspectInfo.votes.length}
@@ -152,8 +155,8 @@ class Profile extends Component {
     return (
       <div className="row">
         <div className="col s6 offset-s3 no-profile-found">
-          <div className="card blue-grey darken-1">
-            <div className="card-content white-text">
+          <div className="card <white></white>">
+            <div className="card-content black-text">
               <span className="card-title">Whoops!</span>
               <p>
                 Looks like this steam user isnt in our database. If you like,
@@ -163,7 +166,7 @@ class Profile extends Component {
             </div>
             <div className="card-action">
               <button
-                className="btn waves-effect waves-light"
+                className="btn waves-effect waves-light blue-grey darken-3"
                 type="submit"
                 name="action"
                 onClick={this.addUser}>
@@ -191,10 +194,31 @@ class Profile extends Component {
     }
   }
 
+  //VERY IMPORTANT FOR SEARCH_BAR
+  useSearchBar(path) {
+    this.props.history.push(path);
+    this.setState({ suspectInfo: null, steamInfo: null }, () => {
+      const { id } = this.props.match.params;
+      axios.get(`/api/suspects/${id}`).then(response => {
+        this.setState({ suspectInfo: response.data });
+        if (this.state.suspectInfo !== null) {
+          axios.get(`/api/suspects/${id}/steam`).then(response => {
+            this.setState({ steamInfo: response.data });
+          });
+        }
+      });
+    });
+  }
+
   render() {
     return (
       <div className="wrapper">
-        <Header />
+        <Header
+          needsHeader={true}
+          useSearchBar={term => {
+            this.useSearchBar(term);
+          }}
+        />
         <main>{this.renderContent()}</main>
       </div>
     );

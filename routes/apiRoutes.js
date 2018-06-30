@@ -37,10 +37,6 @@ module.exports = app => {
     res.send(data);
   });
 
-  function runPlease() {
-    console.log('llegamos aqui');
-  }
-
   //Create a suspect
   app.post('/api/suspects', async (req, res) => {
     let someData = false;
@@ -206,6 +202,59 @@ module.exports = app => {
       }
     }
     res.send(response);
+  });
+
+  //Like a comment
+  app.post('/api/suspects/:steamId/comments/like', async (req, res) => {
+    let data = false;
+    const existingUser = await User.findOne({
+      steamId: req.body.owner
+    });
+    const theSuspect = await Suspect.findOne({
+      steamId: req.params.steamId
+    });
+    if (existingUser && theSuspect) {
+      const existingComment = await Comment.findOne({
+        owner: existingUser._id
+      });
+      if (existingComment) {
+        if (
+          !(existingComment.participants.indexOf(existingUser.steamId) > -1)
+        ) {
+          existingComment.participants.push(existingUser.steamId);
+          await existingComment.save();
+          data = true;
+        }
+      }
+    }
+
+    res.send(data);
+  });
+
+  //Unlike a comment
+  app.delete('/api/suspects/:steamId/comments/like', async (req, res) => {
+    let data = false;
+    const existingUser = await User.findOne({
+      steamId: req.body.owner
+    });
+    const theSuspect = await Suspect.findOne({
+      steamId: req.params.steamId
+    });
+    if (existingUser && theSuspect) {
+      const existingComment = await Comment.findOne({
+        owner: existingUser._id
+      });
+      if (existingComment) {
+        let index = existingComment.participants.indexOf(existingUser.steamId);
+        if (index > -1) {
+          existingComment.participants.splice(index, 1);
+          await existingComment.save();
+          data = true;
+        }
+      }
+    }
+
+    res.send(data);
   });
 
   function checkData(bodyData) {

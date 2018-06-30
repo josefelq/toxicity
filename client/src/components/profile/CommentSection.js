@@ -14,11 +14,34 @@ class CommentSection extends Component {
     this.renderComments = this.renderComments.bind(this);
     this.renderIndividualComments = this.renderIndividualComments.bind(this);
     this.handleCommentAction = this.handleCommentAction.bind(this);
+    this.renderStar = this.renderStar.bind(this);
+    this.likeComment = this.likeComment.bind(this);
+    this.unlikeComment = this.unlikeComment.bind(this);
+    this.commentsHaveChanged = this.commentsHaveChanged.bind(this);
   }
 
   componentDidUpdate(prevProps) {
-    if (this.props.comments.length !== prevProps.comments.length) {
+    if (this.commentsHaveChanged(prevProps.comments)) {
       this.setState({ input: '', comments: this.props.comments });
+    }
+  }
+
+  commentsHaveChanged(oldComments) {
+    const currentComments = this.props.comments;
+    if (currentComments.length !== oldComments.length) {
+      return true;
+    } else {
+      for (let i = 0; i < currentComments.length; i++) {
+        for (let j = 0; j < oldComments.length; j++) {
+          if (
+            currentComments[i].participants.length !==
+            oldComments[j].participants.length
+          ) {
+            return true;
+          }
+        }
+      }
+      return false;
     }
   }
 
@@ -93,7 +116,7 @@ class CommentSection extends Component {
               <div className="row">
                 <div className="col s2 offset-s10">
                   <button
-                    className="btn waves-effect waves-light comment-button"
+                    className="btn waves-effect waves-light comment-button blue-grey darken-3"
                     type="submit"
                     name="action">
                     Submit
@@ -121,25 +144,59 @@ class CommentSection extends Component {
   }
 
   async handleCommentAction() {
-    if (this.userHasComment()) {
-      //Delete
-
-      let request = await axios.delete(
-        `/api/suspects/${this.props.uri}/comments`,
-        {
-          data: {
-            owner: this.props.auth.steamId
-          }
+    let request = await axios.delete(
+      `/api/suspects/${this.props.uri}/comments`,
+      {
+        data: {
+          owner: this.props.auth.steamId
         }
-      );
-      if (request) {
-        this.props.changeProfile(request.data);
       }
-    } else {
-      //Upvote
+    );
+    if (request) {
+      this.props.changeProfile(request.data);
     }
   }
 
+  renderStar(element) {
+    if (element.participants.indexOf(this.props.auth.steamId) > -1) {
+      return (
+        <a onClick={this.unlikeComment}>
+          <i className="material-icons clicky-star waves-effect">favorite</i>
+        </a>
+      );
+    } else {
+      return (
+        <a
+          onClick={() => {
+            this.likeComment(element);
+          }}>
+          <i className="material-icons clicky-star waves-effect">
+            favorite_border
+          </i>
+        </a>
+      );
+    }
+  }
+
+  async unlikeComment(comment) {
+    let request = await axios.delete(
+      `/api/suspects/${this.props.uri}/comments/like`,
+      { data: { owner: this.props.auth.steamId } }
+    );
+    if (request) {
+      this.props.changeProfile(request.data);
+    }
+  }
+
+  async likeComment(comment) {
+    let request = await axios.post(
+      `/api/suspects/${this.props.uri}/comments/like`,
+      { owner: this.props.auth.steamId }
+    );
+    if (request) {
+      this.props.changeProfile(request.data);
+    }
+  }
   renderIndividualComments() {
     let commentList = this.state.comments.map(element => {
       return (
@@ -149,13 +206,25 @@ class CommentSection extends Component {
             alt="User Avatar"
             className="responsive-img circle"
           />
-          <span className="title">{element.steamName}</span>
-          <p>{element.text}</p>
+          <span className="title comment-user">
+            <p>
+              <b>{element.steamName}</b>
+              &nbsp; &nbsp;
+              <small>{element.date} </small>
+            </p>
+          </span>
+          <p>
+            {element.text}
+            <br />
+            {this.renderStar(element)}
+            <small>
+              {element.participants.length} user(s) have found this comment
+              helpful.
+            </small>
+          </p>
 
           <a onClick={this.handleCommentAction} className="secondary-content">
-            <i className="material-icons clicky-trash waves-effect">
-              {this.userHasComment ? 'delete' : 'grade'}
-            </i>
+            <i className="material-icons clicky-trash waves-effect">delete</i>
           </a>
         </li>
       );

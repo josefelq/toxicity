@@ -52,7 +52,6 @@ main {
 .follow {
   margin-top: 21%;
   width: 100%;
-  color: black;
 }
 #textarea2 {
   padding-bottom: 0;
@@ -71,5 +70,17 @@ main {
 }
 
 i.clicky-trash {
-  color: red;
+  color: #263238;
+}
+
+.clicky-star {
+  cursor: pointer;
+}
+
+i.clicky-star {
+  color: #ffd600;
+}
+
+.comment-user {
+  color: #263238;
 }
