@@ -52,7 +52,10 @@ class Profile extends Component {
             if (response.data === true) {
               //this.setState({ suspectInfo: null });
               axios.get(`/api/suspects/${id}`).then(response2 => {
-                this.setState({ suspectInfo: response2.data });
+                this.setState({
+                  suspectInfo: response2.data,
+                  sentRequest: false
+                });
               });
             }
           });
