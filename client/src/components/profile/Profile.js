@@ -9,7 +9,7 @@ import CommentSection from './CommentSection';
 class Profile extends Component {
   constructor(props) {
     super(props);
-    this.state = { suspectInfo: null, steamInfo: null };
+    this.state = { suspectInfo: null, steamInfo: null, sentRequest: false };
     this.addUser = this.addUser.bind(this);
     this.followSuspect = this.followSuspect.bind(this);
     this.unfollowSuspect = this.unfollowSuspect.bind(this);
@@ -18,35 +18,46 @@ class Profile extends Component {
   }
 
   followSuspect() {
-    const { id } = this.props.match.params;
-    axios
-      .post(`/api/suspects/${id}/follow`, {
-        owner: this.props.auth.steamId
-      })
-      .then(response => {
-        if (response.data === true) {
-          //this.setState({ suspectInfo: null });
-          axios.get(`/api/suspects/${id}`).then(response2 => {
-            this.setState({ suspectInfo: response2.data });
+    if (!this.state.sentRequest) {
+      this.setState({ sentRequest: true }, () => {
+        const { id } = this.props.match.params;
+        axios
+          .post(`/api/suspects/${id}/follow`, {
+            owner: this.props.auth.steamId
+          })
+          .then(response => {
+            if (response.data === true) {
+              //this.setState({ suspectInfo: null });
+              axios.get(`/api/suspects/${id}`).then(response2 => {
+                this.setState({
+                  suspectInfo: response2.data,
+                  sentRequest: false
+                });
+              });
+            }
           });
-        }
       });
+    }
   }
 
   unfollowSuspect() {
-    const { id } = this.props.match.params;
-    axios
-      .post(`/api/suspects/${id}/unfollow`, {
-        owner: this.props.auth.steamId
-      })
-      .then(response => {
-        if (response.data === true) {
-          //this.setState({ suspectInfo: null });
-          axios.get(`/api/suspects/${id}`).then(response2 => {
-            this.setState({ suspectInfo: response2.data });
+    if (!this.state.sentRequest) {
+      this.setState({ sentRequest: true }, () => {
+        const { id } = this.props.match.params;
+        axios
+          .post(`/api/suspects/${id}/unfollow`, {
+            owner: this.props.auth.steamId
+          })
+          .then(response => {
+            if (response.data === true) {
+              //this.setState({ suspectInfo: null });
+              axios.get(`/api/suspects/${id}`).then(response2 => {
+                this.setState({ suspectInfo: response2.data });
+              });
+            }
           });
-        }
       });
+    }
   }
 
   addUser() {
@@ -69,12 +80,12 @@ class Profile extends Component {
     });
   }
 
-  changeProfile(response) {
+  changeProfile(response, callback) {
     if (response) {
       //this.setState({ suspectInfo: null });
       const { id } = this.props.match.params;
       axios.get(`/api/suspects/${id}`).then(response => {
-        this.setState({ suspectInfo: response.data });
+        this.setState({ suspectInfo: response.data }, callback());
       });
     } else {
       //Comment couldn't be published
@@ -86,7 +97,7 @@ class Profile extends Component {
       return (
         <div className="container content">
           <div className="row suspect-info">
-            <div className="col s3">
+            <div className="col s2">
               <img
                 className="responsive-img circle"
                 src={this.state.steamInfo.avatarfull}
@@ -94,13 +105,13 @@ class Profile extends Component {
               />
             </div>
             <div className="col s4">
-              <div className="row">
-                <div className="col">
-                  <h3>{this.state.steamInfo.personaname}</h3>
+              <div className="row upper-text">
+                <div className="col s12">
+                  <h4>{this.state.steamInfo.personaname}</h4>
                 </div>
               </div>
               <div className="row">
-                <div className="col">
+                <div className="col s12">
                   <p>
                     <b>SteamID:</b> {this.state.steamInfo.steamid}
                   </p>
@@ -123,7 +134,7 @@ class Profile extends Component {
     if (!this.props.auth) {
       return (
         <a className="waves-effect waves-light btn-large disabled follow">
-          Log in to report.
+          Log in to report ({this.state.suspectInfo.votes.length})
         </a>
       );
     } else if (
@@ -197,17 +208,20 @@ class Profile extends Component {
   //VERY IMPORTANT FOR SEARCH_BAR
   useSearchBar(path) {
     this.props.history.push(path);
-    this.setState({ suspectInfo: null, steamInfo: null }, () => {
-      const { id } = this.props.match.params;
-      axios.get(`/api/suspects/${id}`).then(response => {
-        this.setState({ suspectInfo: response.data });
-        if (this.state.suspectInfo !== null) {
-          axios.get(`/api/suspects/${id}/steam`).then(response => {
-            this.setState({ steamInfo: response.data });
-          });
-        }
-      });
-    });
+    this.setState(
+      { suspectInfo: null, steamInfo: null, sentRequest: false },
+      () => {
+        const { id } = this.props.match.params;
+        axios.get(`/api/suspects/${id}`).then(response => {
+          this.setState({ suspectInfo: response.data });
+          if (this.state.suspectInfo !== null) {
+            axios.get(`/api/suspects/${id}/steam`).then(response => {
+              this.setState({ steamInfo: response.data });
+            });
+          }
+        });
+      }
+    );
   }
 
   render() {

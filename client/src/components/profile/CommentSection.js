@@ -6,7 +6,13 @@ import axios from 'axios';
 class CommentSection extends Component {
   constructor(props) {
     super(props);
-    this.state = { input: '', comments: this.props.comments };
+    this.state = {
+      input: '',
+      comments: this.props.comments,
+      ascending: '0',
+      karma: '1',
+      sentRequest: false
+    };
     this.userHasComment = this.userHasComment.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -18,6 +24,8 @@ class CommentSection extends Component {
     this.likeComment = this.likeComment.bind(this);
     this.unlikeComment = this.unlikeComment.bind(this);
     this.commentsHaveChanged = this.commentsHaveChanged.bind(this);
+    this.handleFilterTypeChange = this.handleFilterTypeChange.bind(this);
+    this.handleFilterOrderChange = this.handleFilterOrderChange.bind(this);
   }
 
   componentDidUpdate(prevProps) {
@@ -32,13 +40,11 @@ class CommentSection extends Component {
       return true;
     } else {
       for (let i = 0; i < currentComments.length; i++) {
-        for (let j = 0; j < oldComments.length; j++) {
-          if (
-            currentComments[i].participants.length !==
-            oldComments[j].participants.length
-          ) {
-            return true;
-          }
+        if (
+          currentComments[i].participants.length !==
+          oldComments[i].participants.length
+        ) {
+          return true;
         }
       }
       return false;
@@ -50,7 +56,7 @@ class CommentSection extends Component {
       <div className="row">
         <div className="col s12">
           <div className="row">
-            <div className="col s2 ">
+            <div className="col s5 ">
               <h5>Comments</h5>
             </div>
           </div>
@@ -69,15 +75,24 @@ class CommentSection extends Component {
     );
   }
 
-  async handleSubmit(event) {
+  handleSubmit(event) {
     event.preventDefault();
-    const sent = await axios.post(`/api/suspects/${this.props.uri}/comments`, {
-      owner: this.props.auth.steamId,
-      text: this.state.input
-    });
+    if (!this.state.sentRequest) {
+      this.setState({ sentRequest: true }, async () => {
+        const sent = await axios.post(
+          `/api/suspects/${this.props.uri}/comments`,
+          {
+            owner: this.props.auth.steamId,
+            text: this.state.input
+          }
+        );
 
-    if (sent) {
-      this.props.changeProfile(sent.data);
+        if (sent) {
+          this.props.changeProfile(sent.data, () => {
+            this.setState({ sentRequest: false });
+          });
+        }
+      });
     }
   }
 
@@ -85,18 +100,58 @@ class CommentSection extends Component {
     this.setState({ input: event.target.value });
   }
 
+  renderCommentFilter() {
+    return (
+      <div className="row">
+        <div className="col s2">
+          <i className="small material-icons" alt="Filter Comments">
+            filter_list
+          </i>
+        </div>
+        <div className="col s5">{this.renderTypeFilter()}</div>
+        <div className="col s5">{this.renderTypeOrder()}</div>
+      </div>
+    );
+  }
+
+  handleFilterTypeChange(event) {
+    this.setState({ karma: event.target.value });
+  }
+
+  handleFilterOrderChange(event) {
+    this.setState({ ascending: event.target.value });
+  }
+
+  renderTypeOrder() {
+    return (
+      <select
+        className="browser-default"
+        defaultValue={this.state.karma ? '0' : '1'}
+        onChange={this.handleFilterOrderChange}>
+        <option value="0">Descending</option>
+        <option value="1">Ascending</option>
+      </select>
+    );
+  }
+
+  renderTypeFilter() {
+    return (
+      <select
+        className="browser-default"
+        defaultValue={this.state.karma ? '1' : '0'}
+        onChange={this.handleFilterTypeChange}>
+        <option value="1">Helpful</option>
+        <option value="0">Date</option>
+      </select>
+    );
+  }
+
   renderCommentInput() {
     if (this.state.comments) {
       if (!this.props.auth) {
         return <div />;
       } else if (this.userHasComment()) {
-        return (
-          <div className="row">
-            <div className="col s12">
-              You already posted a comment on this user.
-            </div>
-          </div>
-        );
+        return;
       } else {
         return (
           <div className="row comment-section">
@@ -134,71 +189,142 @@ class CommentSection extends Component {
   renderComments() {
     if (this.state.comments.length > 0) {
       return (
-        <div className="row">
-          <ul className="collection">{this.renderIndividualComments()}</ul>
+        <div>
+          <div className="row">
+            <div className="col s6">
+              {this.userHasComment()
+                ? 'You already posted a comment here.'
+                : ''}
+            </div>
+            <div className="col s5 offset-s1">{this.renderCommentFilter()}</div>
+          </div>
+          <div className="row">
+            <ul className="collection">{this.renderIndividualComments()}</ul>
+          </div>
         </div>
       );
     } else {
-      return <div>No comments at the moment.</div>;
+      return (
+        <div className="row">
+          <div className="col s12">No comments at the moment.</div>
+        </div>
+      );
     }
   }
 
+  //Delete a comment
   async handleCommentAction() {
-    let request = await axios.delete(
-      `/api/suspects/${this.props.uri}/comments`,
-      {
-        data: {
-          owner: this.props.auth.steamId
+    if (!this.state.sentRequest) {
+      this.setState({ sentRequest: true }, async () => {
+        let request = await axios.delete(
+          `/api/suspects/${this.props.uri}/comments`,
+          {
+            data: {
+              owner: this.props.auth.steamId
+            }
+          }
+        );
+        if (request) {
+          this.props.changeProfile(request.data, () => {
+            this.setState({ sentRequest: false });
+          });
         }
-      }
-    );
-    if (request) {
-      this.props.changeProfile(request.data);
+      });
     }
   }
 
   renderStar(element) {
-    if (element.participants.indexOf(this.props.auth.steamId) > -1) {
-      return (
-        <a onClick={this.unlikeComment}>
-          <i className="material-icons clicky-star waves-effect">favorite</i>
-        </a>
-      );
+    if (this.props.auth) {
+      if (element.participants.indexOf(this.props.auth.steamId) > -1) {
+        return (
+          <a
+            onClick={() => {
+              this.unlikeComment(element);
+            }}>
+            <i className="material-icons clicky-star waves-effect">favorite</i>
+          </a>
+        );
+      } else {
+        return (
+          <a
+            onClick={() => {
+              this.likeComment(element);
+            }}>
+            <i className="material-icons clicky-star waves-effect">
+              favorite_border
+            </i>
+          </a>
+        );
+      }
     } else {
-      return (
-        <a
-          onClick={() => {
-            this.likeComment(element);
-          }}>
-          <i className="material-icons clicky-star waves-effect">
-            favorite_border
-          </i>
-        </a>
-      );
+      return;
     }
   }
 
   async unlikeComment(comment) {
-    let request = await axios.delete(
-      `/api/suspects/${this.props.uri}/comments/like`,
-      { data: { owner: this.props.auth.steamId } }
-    );
-    if (request) {
-      this.props.changeProfile(request.data);
+    if (!this.state.sentRequest) {
+      this.setState({ sentRequest: true }, async () => {
+        let request = await axios.delete(`/api/comments/${comment._id}`, {
+          data: { owner: this.props.auth.steamId }
+        });
+        if (request) {
+          this.props.changeProfile(request.data, () => {
+            this.setState({ sentRequest: true });
+          });
+        }
+      });
     }
   }
 
   async likeComment(comment) {
-    let request = await axios.post(
-      `/api/suspects/${this.props.uri}/comments/like`,
-      { owner: this.props.auth.steamId }
-    );
-    if (request) {
-      this.props.changeProfile(request.data);
+    if (!this.state.sentRequest) {
+      this.setState({ sentRequest: true }, async () => {
+        let request = await axios.post(`/api/comments/${comment._id}`, {
+          owner: this.props.auth.steamId
+        });
+        if (request) {
+          this.props.changeProfile(request.data, () => {
+            this.setState({ sentRequest: false });
+          });
+        }
+      });
     }
   }
+
+  getComparisonFunction() {
+    if (this.state.karma === '1') {
+      return (a, b) => {
+        if (a.participants.length < b.participants.length) {
+          return -1;
+        }
+        if (a.participants.length > b.participants.length) {
+          return 1;
+        }
+        return 0;
+      };
+    } else {
+      return (a, b) => {
+        if (a.date < b.date) {
+          return -1;
+        }
+        if (a.date > b.date) {
+          return 1;
+        }
+        return 0;
+      };
+    }
+  }
+
   renderIndividualComments() {
-    let commentList = this.state.comments.map(element => {
+    let commentList = this.state.comments;
+
+    let sortedList = commentList.sort(this.getComparisonFunction());
+
+    if (this.state.ascending === '0') {
+      sortedList.reverse();
+    }
+
+    let finalList = sortedList.map(element => {
       return (
         <li className="collection-item avatar" key={element._id}>
           <img
@@ -222,14 +348,27 @@ class CommentSection extends Component {
               helpful.
             </small>
           </p>
-
-          <a onClick={this.handleCommentAction} className="secondary-content">
-            <i className="material-icons clicky-trash waves-effect">delete</i>
-          </a>
+          {this.renderTrashIcon(element)}
         </li>
       );
     });
-    return commentList;
+    return finalList;
+  }
+
+  renderTrashIcon(comment) {
+    if (this.props.auth) {
+      if (this.props.auth.steamId === comment.steamId) {
+        return (
+          <a onClick={this.handleCommentAction} className="secondary-content">
+            <i className="material-icons clicky-trash waves-effect">delete</i>
+          </a>
+        );
+      } else {
+        return;
+      }
+    } else {
+      return;
+    }
   }
 }
 

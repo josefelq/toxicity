@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 
+import axios from 'axios';
+
 class Header extends Component {
   constructor(props) {
     super(props);
@@ -17,24 +19,17 @@ class Header extends Component {
 
   async handleSubmit(event) {
     event.preventDefault();
-    const steamSearch = this.state.input.replace(/\s+/g, '');
-    //this is a url
-    if (steamSearch.includes('http')) {
-      const userId = steamSearch.replace(
-        'https://steamcommunity.com/profiles/',
-        ''
-      );
-      let i = 0;
-      for (; i < userId.length; i++) {
-        if (userId.charAt(i) === '/') {
-          break;
-        }
+    let blankCheck = this.state.input;
+
+    if (blankCheck.replace(' ', '')) {
+      const search = await axios.post('/api/suspects/search', {
+        uri: this.state.input
+      });
+      if (search.data) {
+        this.props.useSearchBar(`/suspects/${search.data.theId}`);
+      } else {
+        alert('That steam user does not exist!');
       }
-      const finalUserId = userId.substring(0, i + 1);
-      this.props.useSearchBar(`/suspects/${finalUserId}`);
-    } else {
-      //it's a number
-      this.props.useSearchBar(`/suspects/${steamSearch}`);
     }
   }
 
@@ -70,12 +65,16 @@ class Header extends Component {
               <div className="row" id="topbarsearch">
                 <form onSubmit={this.handleSubmit}>
                   <div className="input-field col s6 s12 red-text">
-                    <i className="white-text material-icons prefix">search</i>
+                    <i
+                      className="white-text material-icons prefix searchIcon"
+                      onClick={this.handleSubmit}>
+                      search
+                    </i>
                     <input
                       type="text"
-                      placeholder="search"
+                      placeholder="Search"
                       id="autocomplete-input"
-                      className="autocomplete white-text"
+                      className="autocomplete black-text white center"
                       value={this.state.input}
                       onChange={this.handleChange}
                     />

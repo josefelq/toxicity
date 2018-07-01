@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const steam = require('steam-web');
 const keys = require('../config/keys');
 
-const steamid = require('steamidconvert')(keys.steamWebAPIKey);
+const getSteamID64 = require('customurl2steamid64/lib/steamid64');
 const steamAPI = new steam({
   apiKey: keys.steamWebAPIKey,
   format: 'json' //optional ['json', 'xml', 'vdf']
@@ -13,6 +13,40 @@ const Suspect = mongoose.model('Suspect');
 const Comment = mongoose.model('Comment');
 
 module.exports = app => {
+  //Returns steamID given URL
+  app.post('/api/suspects/search', async (req, res) => {
+    let response = false;
+
+    const steamSearch = req.body.uri.replace(/\s+/g, '');
+    if (steamSearch) {
+      if (steamSearch.includes('https://steamcommunity.com')) {
+        if (steamSearch.includes('https://steamcommunity.com/id/')) {
+          const search = steamSearch + '/?xml=1';
+          const customId = await getSteamID64(search);
+          if (customId) {
+            response = { theId: customId.steamID64 };
+          }
+        } else {
+          const userId = steamSearch.replace(
+            'https://steamcommunity.com/profiles/',
+            ''
+          );
+          let i = 0;
+          for (; i < userId.length; i++) {
+            if (userId.charAt(i) === '/') {
+              break;
+            }
+          }
+          const finalUserId = userId.substring(0, i + 1);
+          response = { theId: finalUserId };
+        }
+      } else {
+        response = { theId: steamSearch };
+      }
+    }
+    res.send(response);
+  });
+
   //Get Suspect info
   app.get('/api/suspects/:steamId', async (req, res) => {
     let data = false;
@@ -82,16 +116,15 @@ module.exports = app => {
         owner: existingUser._id
       });
       let index = -1;
-
+      /*
       if (existingComment) {
         index = theSuspect.comments.indexOf(existingComment._id);
       }
-
+      */
       if (!(index > -1)) {
         const newComment = await new Comment({
           owner: existingUser._id,
           text: req.body.text,
-          votes: 0,
           date: Date.now()
         }).save();
         data = newComment;
@@ -123,7 +156,7 @@ module.exports = app => {
           await theSuspect.save();
         }
         await deletedComment.remove();
-        response = deletedComment;
+        response = true;
       }
     }
     res.send(response);
@@ -205,26 +238,15 @@ module.exports = app => {
   });
 
   //Like a comment
-  app.post('/api/suspects/:steamId/comments/like', async (req, res) => {
+  app.post('/api/comments/:commentId', async (req, res) => {
     let data = false;
-    const existingUser = await User.findOne({
-      steamId: req.body.owner
-    });
-    const theSuspect = await Suspect.findOne({
-      steamId: req.params.steamId
-    });
-    if (existingUser && theSuspect) {
-      const existingComment = await Comment.findOne({
-        owner: existingUser._id
-      });
-      if (existingComment) {
-        if (
-          !(existingComment.participants.indexOf(existingUser.steamId) > -1)
-        ) {
-          existingComment.participants.push(existingUser.steamId);
-          await existingComment.save();
-          data = true;
-        }
+    const existingComment = await Comment.findById(req.params.commentId);
+    const existingUser = await User.findOne({ steamId: req.body.owner });
+    if (existingComment && existingUser) {
+      if (!(existingComment.participants.indexOf(existingUser.steamId) > -1)) {
+        existingComment.participants.push(existingUser.steamId);
+        await existingComment.save();
+        data = true;
       }
     }
 
@@ -232,28 +254,18 @@ module.exports = app => {
   });
 
   //Unlike a comment
-  app.delete('/api/suspects/:steamId/comments/like', async (req, res) => {
+  app.delete('/api/comments/:commentId', async (req, res) => {
     let data = false;
-    const existingUser = await User.findOne({
-      steamId: req.body.owner
-    });
-    const theSuspect = await Suspect.findOne({
-      steamId: req.params.steamId
-    });
-    if (existingUser && theSuspect) {
-      const existingComment = await Comment.findOne({
-        owner: existingUser._id
-      });
-      if (existingComment) {
-        let index = existingComment.participants.indexOf(existingUser.steamId);
-        if (index > -1) {
-          existingComment.participants.splice(index, 1);
-          await existingComment.save();
-          data = true;
-        }
+    const existingComment = await Comment.findById(req.params.commentId);
+    const existingUser = await User.findOne({ steamId: req.body.owner });
+    if (existingUser && existingComment) {
+      let index = existingComment.participants.indexOf(existingUser.steamId);
+      if (index > -1) {
+        existingComment.participants.splice(index, 1);
+        await existingComment.save();
+        data = true;
       }
     }
-
     res.send(data);
   });
 

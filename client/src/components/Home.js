@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Header from './Header';
+import axios from 'axios';
 
 class Home extends Component {
   constructor(props) {
@@ -17,24 +18,13 @@ class Home extends Component {
 
   async handleSubmit(event) {
     event.preventDefault();
-    const steamSearch = this.state.steamID.replace(/\s+/g, '');
-    //this is a url
-    if (steamSearch.includes('http')) {
-      const userId = steamSearch.replace(
-        'https://steamcommunity.com/profiles/',
-        ''
-      );
-      let i = 0;
-      for (; i < userId.length; i++) {
-        if (userId.charAt(i) === '/') {
-          break;
-        }
-      }
-      const finalUserId = userId.substring(0, i + 1);
-      this.props.history.push(`/suspects/${finalUserId}`);
+    const search = await axios.post('/api/suspects/search', {
+      uri: this.state.steamID
+    });
+    if (search.data) {
+      this.props.history.push(`/suspects/${search.data.theId}`);
     } else {
-      //it's a number
-      this.props.history.push(`/suspects/${steamSearch}`);
+      alert('No steam user does not exist!');
     }
   }
 
@@ -55,8 +45,9 @@ class Home extends Component {
                   <form onSubmit={this.handleSubmit}>
                     <div className="input-field">
                       <input
+                        className="center big-search"
                         id="search"
-                        placeholder="SteamID64 (e.g. 76561198195244371) or URL (e.g. https://steamcommunity.com/profiles/76561198195244371)"
+                        placeholder="Steam Profile URL or SteamID64."
                         type="search"
                         required
                         style={styles}

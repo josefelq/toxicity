@@ -37,6 +37,7 @@ main {
 .suspect-info {
   background-color: white;
   border-radius: 10px;
+  height: 26.8%;
 }
 
 .comment-section {
@@ -50,7 +51,7 @@ main {
 }
 
 .follow {
-  margin-top: 21%;
+  margin-top: 13%;
   width: 100%;
 }
 #textarea2 {
@@ -83,4 +84,16 @@ i.clicky-star {
 
 .comment-user {
   color: #263238;
+}
+
+.searchIcon {
+  cursor: pointer;
+}
+
+input#search.center {
+  padding: 0;
+  width: 100%;
+}
+.upper-text {
+  margin-bottom: 0px;
 }
