@@ -16,11 +16,7 @@ class CommentSection extends Component {
     this.userHasComment = this.userHasComment.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
-    this.renderCommentInput = this.renderCommentInput.bind(this);
-    this.renderComments = this.renderComments.bind(this);
-    this.renderIndividualComments = this.renderIndividualComments.bind(this);
     this.handleCommentAction = this.handleCommentAction.bind(this);
-    this.renderStar = this.renderStar.bind(this);
     this.likeComment = this.likeComment.bind(this);
     this.unlikeComment = this.unlikeComment.bind(this);
     this.commentsHaveChanged = this.commentsHaveChanged.bind(this);
@@ -209,7 +205,9 @@ class CommentSection extends Component {
     } else {
       return (
         <div className="row">
-          <div className="col s12">No comments at the moment.</div>
+          <div className="col s12">
+            No comments at the moment. Be the first one to warn others :)
+          </div>
         </div>
       );
     }

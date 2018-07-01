@@ -13,10 +13,13 @@ body {
   background-color: #eceff1;
 }
 
-header. * {
-  height: 100%;
+header a,
+i {
+  -webkit-user-select: none; /* Chrome all / Safari all */
+  -moz-user-select: none; /* Firefox all */
+  -ms-user-select: none; /* IE 10+ */
+  user-select: none; /* Likely future */
 }
-
 main {
   height: 80%;
 }
@@ -26,7 +29,11 @@ main {
 }
 
 #go-back-home {
-  color: white;
+  color: black;
+}
+
+#go-back-home:hover {
+  color: #90a4ae;
 }
 
 .content {
@@ -90,10 +97,31 @@ i.clicky-star {
   cursor: pointer;
 }
 
+i.searchIcon:hover {
+  color: #b0bec5 !important;
+}
+
 input#search.center {
   padding: 0;
   width: 100%;
 }
 .upper-text {
   margin-bottom: 0px;
+}
+
+input#autocomplete-input.autocomplete.black-text.white {
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+a.highlight:hover {
+  color: #b0bec5;
+}
+
+i.highlight {
+  color: #b0bec5;
+}
+
+nav * {
+  height: 100%;
 }

@@ -90,8 +90,7 @@ module.exports = app => {
             }).save();
             const updateUser = await User.findOneAndUpdate(
               { steamId: req.body.steamId },
-              { suspect: newSuspect._id },
-              { new: true }
+              { suspect: newSuspect._id }
             );
             someData = newSuspect;
           }
@@ -110,7 +109,7 @@ module.exports = app => {
     const theSuspect = await Suspect.findOne({
       steamId: req.params.steamId
     });
-    //TODO: user cannot comment on his own profile (yet)
+
     if (existingUser && theSuspect && checkData(req.body.text)) {
       const existingComment = await Comment.findOne({
         owner: existingUser._id
@@ -123,7 +122,8 @@ module.exports = app => {
         const newComment = await new Comment({
           owner: existingUser._id,
           text: req.body.text,
-          date: Date.now()
+          date: Date.now(),
+          suspect: theSuspect._id
         }).save();
         data = newComment;
         theSuspect.comments.push(newComment._id);
@@ -145,7 +145,8 @@ module.exports = app => {
 
     if (existingUser && theSuspect) {
       const deletedComment = await Comment.findOne({
-        owner: existingUser._id
+        owner: existingUser._id,
+        suspect: theSuspect._id
       });
       if (deletedComment) {
         const index = theSuspect.comments.indexOf(deletedComment._id);

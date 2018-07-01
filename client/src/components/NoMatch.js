@@ -9,12 +9,12 @@ class NoMatch extends Component {
           <div className="wrapper valign-wrapper">
             <div className="row">
               <h1>404 Not Found :(</h1>
-              <p>
-                Time to go back{' '}
+              <h5>
+                Go back{' '}
                 <Link to="/" id="go-back-home">
                   Home
                 </Link>
-              </p>
+              </h5>
             </div>
           </div>
         </main>

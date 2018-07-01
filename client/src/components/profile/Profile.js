@@ -64,11 +64,14 @@ class Profile extends Component {
   }
 
   addUser() {
-    this.setState({ suspectInfo: null });
-    const { id } = this.props.match.params;
-    axios.post('/api/suspects', { steamId: id }).then(response => {
-      this.setState({ suspectInfo: response.data });
-    });
+    if (!this.state.sentRequest) {
+      this.setState({ suspectInfo: null, sentRequest: true }, () => {
+        const { id } = this.props.match.params;
+        axios.post('/api/suspects', { steamId: id }).then(response => {
+          this.setState({ suspectInfo: response.data });
+        });
+      });
+    }
   }
 
   componentDidMount() {
@@ -85,7 +88,6 @@ class Profile extends Component {
 
   changeProfile(response, callback) {
     if (response) {
-      //this.setState({ suspectInfo: null });
       const { id } = this.props.match.params;
       axios.get(`/api/suspects/${id}`).then(response => {
         this.setState({ suspectInfo: response.data }, () => {
@@ -171,29 +173,50 @@ class Profile extends Component {
     return (
       <div className="row">
         <div className="col s6 offset-s3 no-profile-found">
-          <div className="card <white></white>">
+          <div className="card white">
             <div className="card-content black-text">
               <span className="card-title">Whoops!</span>
               <p>
-                Looks like this steam user isnt in our database. If you like,
-                you can add him below. Please make sure the SteamID you entered
-                is valid. Thank you!
+                Looks like this steam user isnt in our database (yet). If you
+                like, you can add him below. Please make sure the SteamID you
+                entered is valid. Thank you!
               </p>
             </div>
-            <div className="card-action">
-              <button
-                className="btn waves-effect waves-light blue-grey darken-3"
-                type="submit"
-                name="action"
-                onClick={this.addUser}>
-                Add user
-                <i className="material-icons right">send</i>
-              </button>
-            </div>
+            <div className="card-action">{this.renderCardMessage()}</div>
           </div>
         </div>
       </div>
     );
+  }
+
+  renderCardMessage() {
+    if (this.props.auth) {
+      return (
+        <div className="row">
+          <div className="col s8">
+            <b>Remember to only add TOXIC Steam users.</b>
+          </div>
+          <div className="col s4">
+            <button
+              className="btn waves-effect waves-light blue-grey darken-3 center-align"
+              type="submit"
+              name="action"
+              onClick={this.addUser}>
+              Add User
+              <i className="material-icons right">send</i>
+            </button>
+          </div>
+        </div>
+      );
+    } else {
+      return (
+        <div className="row">
+          <div className="col s8">
+            <b>You need to be logged in to add steam users.</b>
+          </div>
+        </div>
+      );
+    }
   }
 
   renderLoading() {
