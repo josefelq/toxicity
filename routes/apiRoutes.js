@@ -72,7 +72,7 @@ module.exports = app => {
   });
 
   //Create a suspect
-  app.post('/api/suspects', async (req, res) => {
+  app.post('/api/suspects', async (req, res, next) => {
     let someData = false;
     //check if steamID is number
     const isNum = /^\d+$/.test(req.body.steamId);
@@ -80,19 +80,24 @@ module.exports = app => {
     steamAPI.getPlayerSummaries({
       steamids: [req.body.steamId],
       callback: async (err, data) => {
-        if (data.response.players.length != 0 && isNum) {
-          const checkSuspect = await Suspect.findOne({
-            steamId: req.body.steamId
-          });
-          if (!checkSuspect) {
-            const newSuspect = await new Suspect({
+        if (!err) {
+          if (data.response.players.length === 1 && isNum) {
+            const checkSuspect = await Suspect.findOne({
               steamId: req.body.steamId
-            }).save();
-            const updateUser = await User.findOneAndUpdate(
-              { steamId: req.body.steamId },
-              { suspect: newSuspect._id }
-            );
-            someData = newSuspect;
+            });
+            if (!checkSuspect) {
+              const newSuspect = await new Suspect({
+                steamId: req.body.steamId,
+                steamName: data.response.players[0].personaname,
+                steamAvatar: data.response.players[0].avatarfull
+              }).save();
+
+              const updateUser = await User.findOneAndUpdate(
+                { steamId: req.body.steamId },
+                { suspect: newSuspect._id }
+              );
+              someData = newSuspect;
+            }
           }
         }
         res.send(someData);

@@ -9,7 +9,7 @@ import CommentSection from './CommentSection';
 class Profile extends Component {
   constructor(props) {
     super(props);
-    this.state = { suspectInfo: null, steamInfo: null, sentRequest: false };
+    this.state = { suspectInfo: null, sentRequest: false };
     this.addUser = this.addUser.bind(this);
     this.followSuspect = this.followSuspect.bind(this);
     this.unfollowSuspect = this.unfollowSuspect.bind(this);
@@ -68,7 +68,7 @@ class Profile extends Component {
       this.setState({ suspectInfo: null, sentRequest: true }, () => {
         const { id } = this.props.match.params;
         axios.post('/api/suspects', { steamId: id }).then(response => {
-          this.setState({ suspectInfo: response.data });
+          this.setState({ suspectInfo: response.data, sentRequest: false });
         });
       });
     }
@@ -78,11 +78,6 @@ class Profile extends Component {
     const { id } = this.props.match.params;
     axios.get(`/api/suspects/${id}`).then(response => {
       this.setState({ suspectInfo: response.data });
-      if (this.state.suspectInfo !== null) {
-        axios.get(`/api/suspects/${id}/steam`).then(response => {
-          this.setState({ steamInfo: response.data });
-        });
-      }
     });
   }
 
@@ -100,27 +95,27 @@ class Profile extends Component {
   }
 
   renderProfile() {
-    if (this.state.steamInfo && this.state.suspectInfo) {
+    if (this.state.suspectInfo) {
       return (
         <div className="container content">
           <div className="row suspect-info">
             <div className="col s2">
               <img
                 className="responsive-img circle"
-                src={this.state.steamInfo.avatarfull}
+                src={this.state.suspectInfo.steamAvatar}
                 alt="avatar of user"
               />
             </div>
             <div className="col s4">
               <div className="row upper-text">
                 <div className="col s12">
-                  <h4>{this.state.steamInfo.personaname}</h4>
+                  <h4>{this.state.suspectInfo.steamName}</h4>
                 </div>
               </div>
               <div className="row">
                 <div className="col s12">
                   <p>
-                    <b>SteamID:</b> {this.state.steamInfo.steamid}
+                    <b>SteamID:</b> {this.state.suspectInfo.steamId}
                   </p>
                 </div>
               </div>
@@ -236,20 +231,12 @@ class Profile extends Component {
   //VERY IMPORTANT FOR SEARCH_BAR
   useSearchBar(path) {
     this.props.history.push(path);
-    this.setState(
-      { suspectInfo: null, steamInfo: null, sentRequest: false },
-      () => {
-        const { id } = this.props.match.params;
-        axios.get(`/api/suspects/${id}`).then(response => {
-          this.setState({ suspectInfo: response.data });
-          if (this.state.suspectInfo !== null) {
-            axios.get(`/api/suspects/${id}/steam`).then(response => {
-              this.setState({ steamInfo: response.data });
-            });
-          }
-        });
-      }
-    );
+    this.setState({ suspectInfo: null, sentRequest: false }, () => {
+      const { id } = this.props.match.params;
+      axios.get(`/api/suspects/${id}`).then(response => {
+        this.setState({ suspectInfo: response.data, sentRequest: false });
+      });
+    });
   }
 
   render() {
