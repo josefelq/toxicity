@@ -88,7 +88,9 @@ class Profile extends Component {
       //this.setState({ suspectInfo: null });
       const { id } = this.props.match.params;
       axios.get(`/api/suspects/${id}`).then(response => {
-        this.setState({ suspectInfo: response.data }, callback());
+        this.setState({ suspectInfo: response.data }, () => {
+          callback();
+        });
       });
     } else {
       //Comment couldn't be published

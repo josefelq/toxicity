@@ -32,8 +32,7 @@ class CommentSection extends Component {
     if (this.commentsHaveChanged(prevProps.comments)) {
       this.setState({
         input: '',
-        comments: this.props.comments,
-        sentRequest: false
+        comments: this.props.comments
       });
     }
   }
@@ -218,7 +217,6 @@ class CommentSection extends Component {
 
   //Delete a comment
   async handleCommentAction() {
-    console.log(this.state.sentRequest);
     if (!this.state.sentRequest) {
       this.setState({ sentRequest: true }, async () => {
         let request = await axios.delete(
@@ -274,7 +272,7 @@ class CommentSection extends Component {
         });
         if (request) {
           this.props.changeProfile(request.data, () => {
-            this.setState({ sentRequest: true });
+            this.setState({ sentRequest: false });
           });
         }
       });
