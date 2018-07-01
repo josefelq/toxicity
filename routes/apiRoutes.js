@@ -116,11 +116,9 @@ module.exports = app => {
         owner: existingUser._id
       });
       let index = -1;
-      /*
       if (existingComment) {
         index = theSuspect.comments.indexOf(existingComment._id);
       }
-      */
       if (!(index > -1)) {
         const newComment = await new Comment({
           owner: existingUser._id,
