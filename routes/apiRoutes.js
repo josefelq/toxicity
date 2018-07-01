@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const steam = require('steam-web');
 const keys = require('../config/keys');
 
-const getSteamID64 = require('customurl2steamid64/lib/steamid64');
+const getSteamID64 = require('../services/steamSearch');
 const steamAPI = new steam({
   apiKey: keys.steamWebAPIKey,
   format: 'json' //optional ['json', 'xml', 'vdf']
