@@ -30,7 +30,11 @@ class CommentSection extends Component {
 
   componentDidUpdate(prevProps) {
     if (this.commentsHaveChanged(prevProps.comments)) {
-      this.setState({ input: '', comments: this.props.comments });
+      this.setState({
+        input: '',
+        comments: this.props.comments,
+        sentRequest: false
+      });
     }
   }
 
@@ -214,6 +218,7 @@ class CommentSection extends Component {
 
   //Delete a comment
   async handleCommentAction() {
+    console.log(this.state.sentRequest);
     if (!this.state.sentRequest) {
       this.setState({ sentRequest: true }, async () => {
         let request = await axios.delete(
