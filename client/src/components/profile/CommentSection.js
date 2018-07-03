@@ -56,7 +56,7 @@ class CommentSection extends Component {
         <div className="col s12">
           <div className="row">
             <div className="col s5 ">
-              <h5>Comments</h5>
+              <h5 className="main-text">Comments</h5>
             </div>
           </div>
           {this.renderCommentInput()}
@@ -103,7 +103,7 @@ class CommentSection extends Component {
     return (
       <div className="row">
         <div className="col s2">
-          <i className="small material-icons" alt="Filter Comments">
+          <i className="small material-icons filter-icon" alt="Filter Comments">
             filter_list
           </i>
         </div>
@@ -164,13 +164,15 @@ class CommentSection extends Component {
                     value={this.state.input}
                     onChange={this.handleChange}
                   />
-                  <label htmlFor="textarea2">Your comment</label>
+                  <label htmlFor="textarea2">
+                    Share your thoughts on this user.
+                  </label>
                 </div>
               </div>
               <div className="row">
                 <div className="col s2 offset-s10">
                   <button
-                    className="btn waves-effect waves-light comment-button blue-grey darken-3"
+                    className="btn waves-effect waves-light comment-button teal lighten-2"
                     type="submit"
                     name="action">
                     Submit
@@ -190,7 +192,7 @@ class CommentSection extends Component {
       return (
         <div>
           <div className="row">
-            <div className="col s6">
+            <div className="col s6 secondary-text">
               {this.userHasComment()
                 ? 'You already posted a comment here.'
                 : ''}
@@ -206,7 +208,7 @@ class CommentSection extends Component {
       return (
         <div className="row">
           <div className="col s12">
-            No comments at the moment. Be the first one to warn others :)
+            <p className="secondary-text">No comments at the moment.</p>
           </div>
         </div>
       );
@@ -242,7 +244,9 @@ class CommentSection extends Component {
             onClick={() => {
               this.unlikeComment(element);
             }}>
-            <i className="material-icons clicky-star waves-effect">favorite</i>
+            <i className="material-icons clicky-star waves-effect" id="star-2">
+              favorite
+            </i>
           </a>
         );
       } else {
@@ -251,7 +255,7 @@ class CommentSection extends Component {
             onClick={() => {
               this.likeComment(element);
             }}>
-            <i className="material-icons clicky-star waves-effect">
+            <i className="material-icons clicky-star waves-effect" id="star-1">
               favorite_border
             </i>
           </a>
@@ -327,24 +331,26 @@ class CommentSection extends Component {
 
     let finalList = sortedList.map(element => {
       return (
-        <li className="collection-item avatar" key={element._id}>
+        <li
+          className="collection-item avatar blue-grey darken-2 secondary-text"
+          key={element._id}>
           <img
             src={element.steamAvatar}
             alt="User Avatar"
             className="responsive-img circle"
           />
-          <span className="title comment-user">
+          <span className="title">
             <p>
-              <b>{element.steamName}</b>
+              <b className="main-text">{element.steamName}</b>
               &nbsp; &nbsp;
-              <small>{element.date} </small>
+              <small className="secondary-text">{element.date} </small>
             </p>
           </span>
-          <p>
-            {element.text}
-            <br />
+          <p className="main-text">
+            <p className=" word-wrap">{element.text}</p>
             {this.renderStar(element)}
-            <small>
+            &nbsp;
+            <small className="secondary-text">
               {element.participants.length} user(s) have found this comment
               helpful.
             </small>

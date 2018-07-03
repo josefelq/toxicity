@@ -6,8 +6,7 @@ import axios from 'axios';
 class Header extends Component {
   constructor(props) {
     super(props);
-    this.state = { input: '', searchClick: false };
-    this.renderSearchBar = this.renderSearchBar.bind(this);
+    this.state = { input: '' };
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
   }
@@ -20,7 +19,7 @@ class Header extends Component {
     event.preventDefault();
     let blankCheck = this.state.input;
 
-    if (blankCheck.replace(' ', '')) {
+    if (blankCheck.replace(/\s/g, '')) {
       const search = await axios.post('/api/suspects/search', {
         uri: this.state.input
       });
@@ -52,68 +51,58 @@ class Header extends Component {
       default:
         return (
           <div className="row">
-            <div className="col s6">
-              <Link to="/account" className="highlight">
-                Account
-              </Link>
-            </div>
-            <div className="col s6">
-              <a href="/api/logout" className="highlight">
-                Logout
-              </a>
+            <div className="col s12">
+              <div className="row">
+                <div className="col s6">
+                  <Link to="/account" className="highlight">
+                    Account
+                  </Link>
+                </div>
+                <div className="col s6">
+                  <a href="/api/logout" className="highlight">
+                    Logout
+                  </a>
+                </div>
+              </div>
             </div>
           </div>
         );
     }
   }
   renderSearchBar() {
-    if (this.props.needsHeader) {
-      return (
-        <div className="row">
-          <div className="col s12">{this.renderInput()}</div>
-        </div>
-      );
-    } else {
-      return;
-    }
+    return (
+      <div className="row">
+        <div className="col s12">{this.renderInput()}</div>
+      </div>
+    );
   }
 
   renderDynamicSearch() {
-    if (this.state.searchClick) {
-      return (
-        <div className="col s10">
-          <form onSubmit={this.handleSubmit}>
-            <div className="input-field ">
-              <input
-                type="text"
-                placeholder="Search"
-                id="autocomplete-input"
-                className="autocomplete black-text white"
-                value={this.state.input}
-                onChange={this.handleChange}
-              />
-            </div>
-          </form>
-        </div>
-      );
-    } else {
-      return <div className="col s10" />;
-    }
+    return (
+      <div className="col s10">
+        <form onSubmit={this.handleSubmit}>
+          <div className="input-field">
+            <input
+              type="text"
+              placeholder="Search"
+              id="main-search"
+              className="blue-grey darken-4"
+              value={this.state.input}
+              onChange={this.handleChange}
+            />
+          </div>
+        </form>
+      </div>
+    );
   }
   renderInput() {
     return (
       <div className="row">
         {this.renderDynamicSearch()}
-        <div className="col s1">
+        <div className="col s2">
           <i
             className="white-text material-icons prefix searchIcon"
-            onClick={() => {
-              if (this.state.searchClick) {
-                this.setState({ searchClick: false });
-              } else {
-                this.setState({ searchClick: true });
-              }
-            }}>
+            onClick={this.handleSubmit}>
             search
           </i>
         </div>
@@ -126,22 +115,29 @@ class Header extends Component {
       <header>
         <div className="navbar-fixed">
           <nav>
-            <div className="nav-wrapper blue-grey darken-4">
-              <div className="container">
-                <div className="row">
-                  <div className="col s3">
-                    <Link to="/" className="brand-logo highlight">
-                      No Tilt Zone
-                    </Link>
-                  </div>
-                  <div className="col s2 ">
-                    <Link to="/leaderboards" className="highlight">
-                      Most Wanted
-                    </Link>
-                  </div>
-                  <div className="col s5">{this.renderSearchBar()}</div>
-                  <div className="col s2">{this.renderContent()}</div>
+            <div className="nav-wrapper blue-grey darken-3">
+              <div className="row">
+                <div className="col s2">
+                  <Link to="/" className="brand-logo highlight">
+                    No Tilt Zone
+                  </Link>
                 </div>
+                <div className="col s2">
+                  <div className="row">
+                    <div className="col s4">
+                      <Link to="/" className="highlight">
+                        Home
+                      </Link>
+                    </div>
+                    <div className="col s8">
+                      <Link to="/leaderboards" className="highlight">
+                        Most Wanted
+                      </Link>
+                    </div>
+                  </div>
+                </div>
+                <div className="col s6">{this.renderSearchBar()}</div>
+                <div className="col s2">{this.renderContent()}</div>
               </div>
             </div>
           </nav>

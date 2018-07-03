@@ -10,7 +10,7 @@ body,
 }
 
 body {
-  background-color: #eceff1;
+  background-color: #263238;
 }
 
 header a,
@@ -24,10 +24,6 @@ main {
   height: 80%;
 }
 
-.no-profile-found {
-  margin-top: 10%;
-}
-
 #go-back-home {
   color: black;
 }
@@ -38,23 +34,24 @@ main {
 
 .content {
   height: 100%;
-  margin-top: 1%;
+  margin-top: 2%;
 }
 
 .suspect-info {
-  background-color: white;
+  background-color: #455a64;
   border-radius: 10px;
-  height: 26.8%;
+  height: 27%;
 }
 
 .comment-section {
-  background-color: white;
+  background-color: #263238;
   border-radius: 10px;
-  min-height: 60%;
+  height: 30%;
+  color: #eceff1;
 }
 
 .vertical-align {
-  padding-top: 15%;
+  padding-top: 10%;
 }
 
 .follow {
@@ -78,7 +75,11 @@ main {
 }
 
 i.clicky-trash {
-  color: #263238;
+  color: #cfd8dc;
+}
+
+i.clicky-trash:hover {
+  color: red;
 }
 
 .clicky-star {
@@ -89,39 +90,82 @@ i.clicky-star {
   color: #ffd600;
 }
 
-.comment-user {
-  color: #263238;
+i#star-1 {
+  color: #cfd8dc;
+}
+
+i#star-1:hover {
+  color: #ffd600;
+}
+
+i#star-2 {
+  color: #ffd600;
+}
+
+i#star-2:hover {
+  color: #cfd8dc;
 }
 
 .searchIcon {
   cursor: pointer;
 }
 
-i.searchIcon:hover {
-  color: #b0bec5 !important;
-}
-
 input#search.center {
   padding: 0;
   width: 100%;
 }
+
 .upper-text {
   margin-bottom: 0px;
 }
 
-input#autocomplete-input.autocomplete.black-text.white {
+#main-search {
   padding-left: 10px;
-  padding-right: 10px;
+  padding-right: 5px;
+}
+
+a.highlight {
+  color: #eceff1;
+}
+
+i.searchIcon {
+  color: #eceff1 !important;
 }
 
 a.highlight:hover {
-  color: #b0bec5;
+  color: #4db6ac;
 }
 
-i.highlight {
-  color: #b0bec5;
+i.searchIcon:hover {
+  color: #4db6ac !important;
 }
 
 nav * {
   height: 100%;
+}
+
+.main-text {
+  color: #eceff1;
+}
+
+.secondary-text {
+  color: #cfd8dc;
+}
+
+i.filter-icon {
+  color: #eceff1 !important;
+}
+
+.collection-item {
+  border-color: #263238 !important;
+}
+
+.collection {
+  border-color: #263238;
+}
+
+.word-wrap {
+  margin-top: 10px !important;
+  margin-bottom: 10px !important;
+  word-wrap: break-word;
 }

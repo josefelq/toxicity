@@ -109,12 +109,14 @@ class Profile extends Component {
             <div className="col s4">
               <div className="row upper-text">
                 <div className="col s12">
-                  <h4>{this.state.suspectInfo.steamName}</h4>
+                  <h4 className="main-text">
+                    {this.state.suspectInfo.steamName}
+                  </h4>
                 </div>
               </div>
               <div className="row">
                 <div className="col s12">
-                  <p>
+                  <p className="secondary-text">
                     <b>SteamID:</b> {this.state.suspectInfo.steamId}
                   </p>
                 </div>
@@ -166,10 +168,10 @@ class Profile extends Component {
 
   renderNoProfileFound() {
     return (
-      <div className="row">
-        <div className="col s6 offset-s3 no-profile-found">
-          <div className="card white">
-            <div className="card-content black-text">
+      <div className="row vertical-align">
+        <div className="col s6 offset-s3 ">
+          <div className="card blue-grey darken-2">
+            <div className="card-content main-text">
               <span className="card-title">Whoops!</span>
               <p>
                 Looks like this steam user isnt in our database (yet). If you
@@ -189,11 +191,13 @@ class Profile extends Component {
       return (
         <div className="row">
           <div className="col s8">
-            <b>Remember to only add TOXIC Steam users.</b>
+            <b className="secondary-text">
+              Remember to only add TOXIC Steam users.
+            </b>
           </div>
           <div className="col s4">
             <button
-              className="btn waves-effect waves-light blue-grey darken-3 center-align"
+              className="btn waves-effect waves-light teal lighten-2 center-align"
               type="submit"
               name="action"
               onClick={this.addUser}>
@@ -243,7 +247,6 @@ class Profile extends Component {
     return (
       <div className="wrapper">
         <Header
-          needsHeader={true}
           useSearchBar={term => {
             this.useSearchBar(term);
           }}
