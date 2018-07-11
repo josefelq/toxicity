@@ -5,6 +5,7 @@ import axios from 'axios';
 
 import Loading from '../Loading';
 import CommentSection from './CommentSection';
+import Footer from '../Footer';
 
 class Profile extends Component {
   constructor(props) {
@@ -109,7 +110,7 @@ class Profile extends Component {
             <div className="col s4">
               <div className="row upper-text">
                 <div className="col s12">
-                  <h4 className="main-text">
+                  <h4 className="main-text truncate">
                     {this.state.suspectInfo.steamName}
                   </h4>
                 </div>
@@ -128,6 +129,9 @@ class Profile extends Component {
             comments={this.state.suspectInfo.comments}
             uri={this.props.match.params.id}
             changeProfile={this.changeProfile}
+            useSearchBar={term => {
+              this.useSearchBar(term);
+            }}
           />
         </div>
       );
@@ -156,7 +160,7 @@ class Profile extends Component {
     } else {
       return (
         <a
-          className="waves-effect waves-light btn-large red follow black-text"
+          className="waves-effect waves-light btn-large orange accent-2  follow black-text"
           onClick={this.followSuspect}>
           Report (
           {this.state.suspectInfo.votes.length}
@@ -210,8 +214,11 @@ class Profile extends Component {
     } else {
       return (
         <div className="row">
-          <div className="col s8">
-            <b>You need to be logged in to add steam users.</b>
+          <div className="col s12">
+            <b className="white-text">
+              You need to be logged into your steam account in order to add
+              users.
+            </b>
           </div>
         </div>
       );
@@ -252,6 +259,7 @@ class Profile extends Component {
           }}
         />
         <main>{this.renderContent()}</main>
+        <Footer />
       </div>
     );
   }

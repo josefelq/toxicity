@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+
 import Header from './Header';
+import Footer from './Footer';
 
 class Home extends Component {
   constructor(props) {
@@ -33,6 +35,7 @@ class Home extends Component {
           }}
         />
         <main>{this.renderContent()}</main>
+        <Footer />
       </div>
     );
   }

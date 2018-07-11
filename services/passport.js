@@ -63,6 +63,8 @@ passport.use(
           }).save();
         }
 
+        user.populate('following');
+
         done(null, user);
       });
     }

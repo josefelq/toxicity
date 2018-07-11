@@ -11,6 +11,9 @@ body,
 
 body {
   background-color: #263238;
+  display: flex;
+  min-height: 100vh;
+  flex-direction: column;
 }
 
 header a,
@@ -20,8 +23,10 @@ i {
   -ms-user-select: none; /* IE 10+ */
   user-select: none; /* Likely future */
 }
+
 main {
-  height: 80%;
+  flex: 1 0 auto;
+  min-height: 90vh;
 }
 
 #go-back-home {
@@ -51,7 +56,7 @@ main {
 }
 
 .vertical-align {
-  padding-top: 10%;
+  padding-top: 11%;
 }
 
 .follow {
@@ -133,11 +138,11 @@ i.searchIcon {
 }
 
 a.highlight:hover {
-  color: #4db6ac;
+  color: #ffab40;
 }
 
 i.searchIcon:hover {
-  color: #4db6ac !important;
+  color: #ffab40 !important;
 }
 
 nav * {
@@ -168,4 +173,25 @@ i.filter-icon {
   margin-top: 10px !important;
   margin-bottom: 10px !important;
   word-wrap: break-word;
+}
+
+.contrast {
+  color: #ffab40;
+}
+
+/* label focus color */
+.input-field input[type='text']:focus + label,
+.materialize-textarea:focus:not([readonly]) + label {
+  color: #bdbdbd !important;
+}
+
+/* label underline focus color */
+.input-field input[type='text']:focus,
+.materialize-textarea:focus:not([readonly]) {
+  border-bottom: 1px solid #bdbdbd !important;
+  box-shadow: 0 1px 0 0 #bdbdbd !important;
+}
+
+.comment-owner {
+  cursor: pointer;
 }

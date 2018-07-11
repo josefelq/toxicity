@@ -172,7 +172,7 @@ class CommentSection extends Component {
               <div className="row">
                 <div className="col s2 offset-s10">
                   <button
-                    className="btn waves-effect waves-light comment-button teal lighten-2"
+                    className="btn waves-effect waves-light comment-button blue-grey"
                     type="submit"
                     name="action">
                     Submit
@@ -340,13 +340,19 @@ class CommentSection extends Component {
             className="responsive-img circle"
           />
           <span className="title">
-            <p>
-              <b className="main-text">{element.steamName}</b>
+            <p className="truncate">
+              <b
+                className="main-text comment-owner"
+                onClick={() => {
+                  this.props.useSearchBar(element.steamId);
+                }}>
+                {element.steamName}
+              </b>
               &nbsp; &nbsp;
               <small className="secondary-text">{element.date} </small>
             </p>
           </span>
-          <p className="main-text">
+          <div className="main-text">
             <p className=" word-wrap">{element.text}</p>
             {this.renderStar(element)}
             &nbsp;
@@ -354,7 +360,7 @@ class CommentSection extends Component {
               {element.participants.length} user(s) have found this comment
               helpful.
             </small>
-          </p>
+          </div>
           {this.renderTrashIcon(element)}
         </li>
       );

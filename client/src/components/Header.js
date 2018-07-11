@@ -6,7 +6,7 @@ import axios from 'axios';
 class Header extends Component {
   constructor(props) {
     super(props);
-    this.state = { input: '' };
+    this.state = { input: '', request: false };
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
   }
@@ -15,18 +15,23 @@ class Header extends Component {
     this.setState({ input: event.target.value });
   }
 
-  async handleSubmit(event) {
+  handleSubmit(event) {
     event.preventDefault();
-    let blankCheck = this.state.input;
-
-    if (blankCheck.replace(/\s/g, '')) {
-      const search = await axios.post('/api/suspects/search', {
-        uri: this.state.input
-      });
-      if (search.data) {
-        this.props.useSearchBar(`/suspects/${search.data.theId}`);
-      } else {
-        alert('That steam user does not exist!');
+    if (!this.state.request) {
+      let blankCheck = this.state.input;
+      if (blankCheck.replace(/\s/g, '')) {
+        this.setState({ request: true }, async () => {
+          const search = await axios.post('/api/suspects/search', {
+            uri: this.state.input
+          });
+          this.setState({ request: false }, () => {
+            if (search.data) {
+              this.props.useSearchBar(`/suspects/${search.data.theId}`);
+            } else {
+              alert('That steam user does not exist!');
+            }
+          });
+        });
       }
     }
   }
@@ -54,7 +59,9 @@ class Header extends Component {
             <div className="col s12">
               <div className="row">
                 <div className="col s6">
-                  <Link to="/account" className="highlight">
+                  <Link
+                    to={'/account/' + this.props.auth._id}
+                    className="highlight">
                     Account
                   </Link>
                 </div>

@@ -3,6 +3,7 @@ const steam = require('steam-web');
 const keys = require('../config/keys');
 
 const getSteamID64 = require('../services/steamSearch');
+const getSteamUser = require('../services/steamUser');
 const steamAPI = new steam({
   apiKey: keys.steamWebAPIKey,
   format: 'json' //optional ['json', 'xml', 'vdf']
@@ -183,7 +184,9 @@ module.exports = app => {
   //get User data
   app.get('/api/users/:userId', async (req, res) => {
     let response = false;
-    const existingUser = await User.findById(req.params.userId);
+    const existingUser = await User.findById(req.params.userId).populate(
+      'following'
+    );
 
     if (existingUser) {
       response = existingUser;
@@ -271,6 +274,26 @@ module.exports = app => {
       }
     }
     res.send(data);
+  });
+
+  //Update
+  app.post('/api/users/:id/update', async (req, res) => {
+    let response = false;
+    const existingUser = await User.findById(req.params.id);
+    if (existingUser) {
+      const request = await getSteamUser(existingUser.steamId);
+      if (request.length === 1) {
+        if (existingUser.steamName !== request.personaname) {
+          existingUser.steamName = request[0].personaname;
+        }
+        if (existingUser.steamAvatar !== request.avatarfull) {
+          existingUser.steamAvatar = request[0].avatarfull;
+        }
+        await existingUser.save();
+        response = existingUser;
+      }
+    }
+    res.send(response);
   });
 
   function checkData(bodyData) {
