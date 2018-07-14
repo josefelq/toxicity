@@ -45,13 +45,13 @@ main {
 .suspect-info {
   background-color: #455a64;
   border-radius: 10px;
-  height: 27%;
+  overflow: hidden;
 }
 
 .comment-section {
   background-color: #263238;
   border-radius: 10px;
-  height: 30%;
+  min-height: 30%;
   color: #eceff1;
 }
 
