@@ -15,10 +15,33 @@ class Home extends Component {
       case null:
         return;
       case false:
-        return;
+        return this.renderWelcome();
       default:
-        return <div>hola mundo</div>;
+        return this.renderWelcome();
     }
+  }
+
+  renderWelcome() {
+    return (
+      <div className="container content main-text big-text">
+        <div className="row center">
+          <div className="col s12 add-margin">
+            Tired of <b className="contrast">TOXIC</b> players ruining your
+            games?
+          </div>
+          <div className="col s12 add-margin">
+            <b className="contrast">REPORT</b> them.
+          </div>
+          <div className="col s12 add-margin">
+            <b className="contrast">TRACK</b> them.
+          </div>
+          <div className="col s12 add-margin">But most importantly . . .</div>
+          <div className="col s12 add-margin">
+            <b>HELP</b> others <i class="fas fa-grin-beam" />.
+          </div>
+        </div>
+      </div>
+    );
   }
 
   //VERY IMPORTANT FOR SEARCH_BAR

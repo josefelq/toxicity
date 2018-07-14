@@ -244,7 +244,7 @@ class CommentSection extends Component {
             onClick={() => {
               this.unlikeComment(element);
             }}>
-            <i className="material-icons clicky-star waves-effect" id="star-2">
+            <i className="material-icons clicky waves-effect" id="star-2">
               favorite
             </i>
           </a>
@@ -255,7 +255,7 @@ class CommentSection extends Component {
             onClick={() => {
               this.likeComment(element);
             }}>
-            <i className="material-icons clicky-star waves-effect" id="star-1">
+            <i className="material-icons clicky waves-effect" id="star-1">
               favorite_border
             </i>
           </a>
@@ -340,20 +340,28 @@ class CommentSection extends Component {
             className="responsive-img circle"
           />
           <span className="title">
-            <p className="truncate">
-              <b
-                className="main-text comment-owner"
-                onClick={() => {
-                  this.props.useSearchBar(element.steamId);
-                }}>
-                {element.steamName}
-              </b>
-              &nbsp; &nbsp;
-              <small className="secondary-text">{element.date} </small>
-            </p>
+            <div className="row no-margin">
+              <div className="col no-padding-left">
+                <b
+                  id={
+                    element.steamName === this.props.auth.steamName
+                      ? 'contrast'
+                      : ''
+                  }
+                  className="main-text clicky"
+                  onClick={() => {
+                    this.props.useSearchBar(element.steamId);
+                  }}>
+                  {element.steamName}
+                </b>
+              </div>
+              <div className="col s3">
+                <small className="secondary-text">{element.date} </small>
+              </div>
+            </div>
           </span>
           <div className="main-text">
-            <p className=" word-wrap">{element.text}</p>
+            <p className="word-wrap">{element.text}</p>
             {this.renderStar(element)}
             &nbsp;
             <small className="secondary-text">
@@ -373,7 +381,9 @@ class CommentSection extends Component {
       if (this.props.auth.steamId === comment.steamId) {
         return (
           <a onClick={this.handleCommentAction} className="secondary-content">
-            <i className="material-icons clicky-trash waves-effect">delete</i>
+            <i className="material-icons clicky waves-effect" id="trash">
+              delete
+            </i>
           </a>
         );
       } else {

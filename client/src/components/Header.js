@@ -44,11 +44,8 @@ class Header extends Component {
         return (
           <div className="row">
             <div className="col s12">
-              <a href="/auth/steam">
-                <img
-                  src="https://steamcommunity-a.akamaihd.net/public/images/signinthroughsteam/sits_02.png"
-                  alt="Sign in with steam"
-                />
+              <a href="/auth/steam" className="highlight">
+                <i className="fab fa-steam" /> Sign In
               </a>
             </div>
           </div>
@@ -108,7 +105,7 @@ class Header extends Component {
         {this.renderDynamicSearch()}
         <div className="col s2">
           <i
-            className="white-text material-icons prefix searchIcon"
+            className="white-text material-icons prefix clicky searchIcon"
             onClick={this.handleSubmit}>
             search
           </i>
@@ -122,30 +119,28 @@ class Header extends Component {
       <header>
         <div className="navbar-fixed">
           <nav>
-            <div className="nav-wrapper blue-grey darken-3">
-              <div className="row">
-                <div className="col s2">
-                  <Link to="/" className="brand-logo highlight">
-                    No Tilt Zone
-                  </Link>
-                </div>
-                <div className="col s2">
-                  <div className="row">
-                    <div className="col s4">
-                      <Link to="/" className="highlight">
-                        Home
-                      </Link>
-                    </div>
-                    <div className="col s8">
-                      <Link to="/leaderboards" className="highlight">
-                        Most Wanted
-                      </Link>
-                    </div>
+            <div className="nav-wrapper blue-grey darken-3 row">
+              <div className="col s2">
+                <Link to="/" className="brand-logo highlight">
+                  No Tilt Zone
+                </Link>
+              </div>
+              <div className="col s2">
+                <div className="row">
+                  <div className="col s4">
+                    <Link to="/" className="highlight">
+                      Home
+                    </Link>
+                  </div>
+                  <div className="col s8">
+                    <Link to="/leaderboards" className="highlight">
+                      Most Wanted
+                    </Link>
                   </div>
                 </div>
-                <div className="col s6">{this.renderSearchBar()}</div>
-                <div className="col s2">{this.renderContent()}</div>
               </div>
+              <div className="col s6">{this.renderSearchBar()}</div>
+              <div className="col s2">{this.renderContent()}</div>
             </div>
           </nav>
         </div>

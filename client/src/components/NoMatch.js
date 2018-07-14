@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 class NoMatch extends Component {
   render() {
     return (
-      <div className="wrapper">
+      <div className="wrapper main-text">
         <main>
           <div className="wrapper valign-wrapper">
             <div className="row">

@@ -107,7 +107,7 @@ class Profile extends Component {
                 alt="avatar of user"
               />
             </div>
-            <div className="col s4">
+            <div className="col s6">
               <div className="row upper-text">
                 <div className="col s12">
                   <h4 className="main-text truncate">

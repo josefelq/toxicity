@@ -1,13 +1,8 @@
 const mongoose = require('mongoose');
-const steam = require('steam-web');
 const keys = require('../config/keys');
 
 const getSteamID64 = require('../services/steamSearch');
 const getSteamUser = require('../services/steamUser');
-const steamAPI = new steam({
-  apiKey: keys.steamWebAPIKey,
-  format: 'json' //optional ['json', 'xml', 'vdf']
-});
 
 const User = mongoose.model('users');
 const Suspect = mongoose.model('Suspect');
@@ -73,37 +68,29 @@ module.exports = app => {
   });
 
   //Create a suspect
-  app.post('/api/suspects', async (req, res, next) => {
-    let someData = false;
-    //check if steamID is number
-    const isNum = /^\d+$/.test(req.body.steamId);
+  app.post('/api/suspects', async (req, res) => {
+    let response = false;
     //check if it's a valid steam user
-    steamAPI.getPlayerSummaries({
-      steamids: [req.body.steamId],
-      callback: async (err, data) => {
-        if (!err) {
-          if (data.response.players.length === 1 && isNum) {
-            const checkSuspect = await Suspect.findOne({
-              steamId: req.body.steamId
-            });
-            if (!checkSuspect) {
-              const newSuspect = await new Suspect({
-                steamId: req.body.steamId,
-                steamName: data.response.players[0].personaname,
-                steamAvatar: data.response.players[0].avatarfull
-              }).save();
+    const validSteamUser = await getSteamUser(req.body.steamId);
+    if (validSteamUser.length === 1) {
+      const checkSuspect = await Suspect.findOne({
+        steamId: req.body.steamId
+      });
+      if (!checkSuspect) {
+        const newSuspect = await new Suspect({
+          steamId: req.body.steamId,
+          steamName: validSteamUser[0].personaname,
+          steamAvatar: validSteamUser[0].avatarfull
+        }).save();
 
-              const updateUser = await User.findOneAndUpdate(
-                { steamId: req.body.steamId },
-                { suspect: newSuspect._id }
-              );
-              someData = newSuspect;
-            }
-          }
-        }
-        res.send(someData);
+        const updateUser = await User.findOneAndUpdate(
+          { steamId: req.body.steamId },
+          { suspect: newSuspect._id }
+        );
+        someData = newSuspect;
       }
-    });
+    }
+    res.send(someData);
   });
 
   //Comment on a suspect's profile
@@ -165,20 +152,6 @@ module.exports = app => {
       }
     }
     res.send(response);
-  });
-
-  //Get Steam info
-  app.get('/api/suspects/:steamId/steam', (req, res) => {
-    let someData = false;
-    steamAPI.getPlayerSummaries({
-      steamids: [req.params.steamId],
-      callback: async (err, data) => {
-        if (data.response.players.length != 0) {
-          someData = data.response.players[0];
-        }
-        res.send(someData);
-      }
-    });
   });
 
   //get User data
@@ -290,7 +263,10 @@ module.exports = app => {
           existingUser.steamAvatar = request[0].avatarfull;
         }
         await existingUser.save();
-        response = existingUser;
+        const finalUser = await User.findById(existingUser._id).populate(
+          'following'
+        );
+        response = finalUser;
       }
     }
     res.send(response);
