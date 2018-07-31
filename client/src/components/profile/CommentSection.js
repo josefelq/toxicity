@@ -172,7 +172,7 @@ class CommentSection extends Component {
               <div className="row">
                 <div className="col s2 offset-s10">
                   <button
-                    className="btn waves-effect waves-light comment-button blue-grey"
+                    className="btn waves-effect waves-light comment-button orange darken-2"
                     type="submit"
                     name="action">
                     Submit

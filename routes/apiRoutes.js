@@ -7,6 +7,7 @@ const getSteamUser = require('../services/steamUser');
 const User = mongoose.model('users');
 const Suspect = mongoose.model('Suspect');
 const Comment = mongoose.model('Comment');
+const Stats = mongoose.model('Stats');
 
 module.exports = app => {
   //Returns steamID given URL
@@ -80,7 +81,8 @@ module.exports = app => {
         const newSuspect = await new Suspect({
           steamId: req.body.steamId,
           steamName: validSteamUser[0].personaname,
-          steamAvatar: validSteamUser[0].avatarfull
+          steamAvatar: validSteamUser[0].avatarfull,
+          votesLength: 0
         }).save();
 
         const updateUser = await User.findOneAndUpdate(
@@ -182,6 +184,7 @@ module.exports = app => {
       if (!(suspectReports.indexOf(existingUser.steamId) > -1)) {
         theSuspect.votes.push(existingUser.steamId);
         existingUser.following.push(theSuspect._id);
+        theSuspect.votesLength += 1;
         response = true;
         await theSuspect.save();
         await existingUser.save();
@@ -205,6 +208,7 @@ module.exports = app => {
       const index = suspectReports.indexOf(existingUser.steamId);
       if (index > -1) {
         theSuspect.votes.splice(index, 1);
+        theSuspect.votesLength -= 1;
         const index2 = existingUser.following.indexOf(theSuspect._id);
         if (index2 > -1) {
           existingUser.following.splice(index2, 1);
@@ -270,6 +274,12 @@ module.exports = app => {
       }
     }
     res.send(response);
+  });
+
+  app.get('/api/leaderboards', async (req, res) => {
+    let response = false;
+    const mostToxic = await Stats.find().populate('suspects');
+    res.send(mostToxic);
   });
 
   function checkData(bodyData) {

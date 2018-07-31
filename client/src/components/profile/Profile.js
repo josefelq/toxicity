@@ -160,7 +160,7 @@ class Profile extends Component {
     } else {
       return (
         <a
-          className="waves-effect waves-light btn-large orange accent-2  follow black-text"
+          className="waves-effect waves-light btn-large orange darken-4  follow "
           onClick={this.followSuspect}>
           Report (
           {this.state.suspectInfo.votes.length}
@@ -201,7 +201,7 @@ class Profile extends Component {
           </div>
           <div className="col s4">
             <button
-              className="btn waves-effect waves-light teal lighten-2 center-align"
+              className="btn waves-effect waves-light orange darken-4 center-align"
               type="submit"
               name="action"
               onClick={this.addUser}>

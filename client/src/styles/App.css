@@ -230,3 +230,7 @@ li.li-exception {
 .add-margin {
   margin: 2%;
 }
+
+.spinner-layer {
+  border-color: #ffab40;
+}

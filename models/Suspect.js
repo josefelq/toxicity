@@ -6,6 +6,7 @@ const suspectSchema = new Schema({
   steamName: String,
   steamAvatar: String,
   votes: [{ type: String }],
+  votesLength: Number,
   comments: [{ type: Schema.Types.ObjectId, ref: 'Comment' }]
 });
 

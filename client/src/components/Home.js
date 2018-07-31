@@ -37,7 +37,7 @@ class Home extends Component {
           </div>
           <div className="col s12 add-margin">But most importantly . . .</div>
           <div className="col s12 add-margin">
-            <b>HELP</b> others <i class="fas fa-grin-beam" />.
+            <b>HELP</b> others <i className="fas fa-grin-beam" />.
           </div>
         </div>
       </div>
