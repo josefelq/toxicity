@@ -26,7 +26,11 @@ i {
 
 main {
   flex: 1 0 auto;
-  min-height: 90vh;
+  min-height: 85vh;
+}
+
+footer {
+  padding: 0 !important;
 }
 
 #go-back-home {
